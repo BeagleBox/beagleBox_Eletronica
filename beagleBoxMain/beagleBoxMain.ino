@@ -8,7 +8,10 @@ int vel = 0; // Velocidade dos motores, Range:(0-255)
 int estado = 'i'; // inicia sem atuação nos motores
 int ultimoEstado;
 boolean flagSerial = false;
-unsigned int counter=0;
+unsigned int encoderCounter=0;
+
+boolean encoderOldValue = true;
+boolean encoderNewValue = true;
 
 //INTERVALO
 const unsigned long Encoder1Interval = 1000;
@@ -17,18 +20,13 @@ unsigned long Encoder1Timer;
 
 //===========================================================================
 
-void docount()  // counts from the speed sensor
-{
-  counter++;  // increase +1 the counter value
-} 
-
 void distanciaPercorrida()
 {
-  Serial.print("Motor Speed: "); 
+  /*Serial.print("Motor Speed: "); 
   int rotation = (counter / 20);  // divide by number of holes in Disc
   Serial.print(rotation,DEC);  
-  Serial.println(" Rotation per seconds"); 
-  counter=0;  //  reset counter to zero
+  Serial.println(" Rotation per seconds");*/  
+  encoderCounter=0;  //  reset counter to zero
   Encoder1Timer = millis();
 }
 
@@ -42,13 +40,20 @@ void setup() {
   pinMode(esqA, OUTPUT);
   pinMode(esqB, OUTPUT);
 
-  pinMode(2, INPUT); // entrada digital do encoder
+  pinMode(2,INPUT);
+
+  if (digitalRead(2) == LOW){encoderOldValue = false;}
 } 
 //===========================================================================
 
 void loop() { 
 
-  if(digitalRead(2) == HIGH){docount();}
+  encoderNewValue = digitalRead(2);
+  
+  if(digitalRead(2) != encoderOldValue ){
+    encoderCounter++;
+    encoderOldValue = encoderNewValue;
+  }
   
   if ((millis() - Encoder1Timer) >= Encoder1Interval) {
     distanciaPercorrida();
