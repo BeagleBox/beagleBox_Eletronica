@@ -22,15 +22,13 @@ void docount()  // counts from the speed sensor
   counter++;  // increase +1 the counter value
 } 
 
-void timerIsr()
+void distanciaPercorrida()
 {
-  //Timer1.detachInterrupt();  //stop the timer
   Serial.print("Motor Speed: "); 
   int rotation = (counter / 20);  // divide by number of holes in Disc
   Serial.print(rotation,DEC);  
   Serial.println(" Rotation per seconds"); 
   counter=0;  //  reset counter to zero
-  //Timer1.attachInterrupt( timerIsr );  //enable the timer
   Encoder1Timer = millis();
 }
 
@@ -43,11 +41,8 @@ void setup() {
   pinMode(dirB, OUTPUT);
   pinMode(esqA, OUTPUT);
   pinMode(esqB, OUTPUT);
-  //Init do Encoder
-  //Timer1.initialize(1000000); // set timer for 1sec
-  pinMode(2, INPUT);
-  //attachInterrupt(0, docount, RISING);  // increase counter when speed sensor pin goes High
-  //Timer1.attachInterrupt( timerIsr ); // enable the timer
+
+  pinMode(2, INPUT); // entrada digital do encoder
 } 
 //===========================================================================
 
@@ -56,8 +51,8 @@ void loop() {
   if(digitalRead(2) == HIGH){docount();}
   
   if ((millis() - Encoder1Timer) >= Encoder1Interval) {
-    timerIsr();
-  }//fim Encoder1Pisca
+    distanciaPercorrida();
+  }//fim Encoder1
   
   //Controle 
   if(estado=='i'){} // OFF
