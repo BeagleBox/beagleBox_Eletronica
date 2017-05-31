@@ -1,4 +1,4 @@
-//#include <TimerOne.h>
+#define passoDeVelocidade 10
 
 int esqA = 5; 
 int esqB = 6; 
@@ -22,10 +22,8 @@ unsigned long Encoder1Timer;
 
 void distanciaPercorrida()
 {
-  /*Serial.print("Motor Speed: "); 
-  int rotation = (counter / 20);  // divide by number of holes in Disc
-  Serial.print(rotation,DEC);  
-  Serial.println(" Rotation per seconds");*/  
+  Serial.print("Numero de rotacoes: ");  
+  Serial.println(encoderCounter,DEC);  
   encoderCounter=0;  //  reset counter to zero
   Encoder1Timer = millis();
 }
@@ -80,10 +78,10 @@ void loop() {
   }
   //Velocidade 
   if(estado=='q'){ // Aumenta a velocidade dos motores
-    velocidade(+64);
+    velocidade(passoDeVelocidade);
   }
   if(estado=='e'){ // Diminui a velocidade dos motores
-    velocidade(-64);
+    velocidade(-passoDeVelocidade);
   }
 }
 
@@ -99,24 +97,10 @@ void movimento(int a,int b,int c,int d) {
 }
 
 void velocidade(signed int a){
-  if (vel==192){
-    if(a == +64){vel = 255;}
-    else{vel = vel + a;}
-  }
-  else if (vel>=255){
-    if(a == -64){vel = vel + a;} 
-  }
-  else if (vel<=0){
-    if(a == +64){vel = vel + a;}  
-  }  
-  else{
-    vel = vel + a;
-    if (vel <=0) {vel = 0;}
-    else if (vel >=255){vel = 255;}
-  }
+  vel = constrain(vel + a,0,255);
   Serial.print("Velocidade: ");
   Serial.println(vel);
-  estado = ultimoEstado;
+  estado = ultimoEstado; //Variavel pra continuar o mesmo comando de movimento
 }
 //===========================================================================
 
