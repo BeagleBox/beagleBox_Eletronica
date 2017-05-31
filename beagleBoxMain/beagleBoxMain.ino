@@ -16,7 +16,7 @@ int dirB = 10;
 int vel = 0; // Velocidade dos motores, Range:(0-255)
 
 //Estado de atuação dos motores
-int estado = 'i'; // inicia sem atuação nos motores
+//int estado = 'i'; // inicia sem atuação nos motores
 int ultimoEstado;
 
 //Contador do numero de voltas que o encoder realizou
@@ -31,6 +31,8 @@ const unsigned long Encoder1Interval = 1000;
 //Timer
 unsigned long Encoder1Timer;
 
+
+int flag = 0;
 //===========================================================================
 //DISTANCIA PERCORRIDA
 
@@ -52,28 +54,28 @@ void movimento(int a,int b,int c,int d) {
   analogWrite(esqA, b);
   analogWrite(dirB, c); 
   analogWrite(esqB, d);
-  ultimoEstado = estado;
+  //ultimoEstado = estado;
 }
 
 void velocidade(signed int a){
   vel = constrain(vel + a,0,255);
   Serial.print("Velocidade: ");
   Serial.println(vel);
-  estado = ultimoEstado; //Variavel pra continuar o mesmo comando de movimento
+  //estado = ultimoEstado; //Variavel pra continuar o mesmo comando de movimento
 }
 //===========================================================================
 // PEGAR DADO NA SERIAL UM SÓ VEZ
 
-void serialEvent() {
+/*void serialEvent() {
   while (Serial.available()) {
     estado = Serial.read(); // recebe novo dado até receber \n
   }
-}
+}*/
 
 //===========================================================================
 //Controle
 
-void controle(char a){
+void controle(char estado){
   if(estado=='i'){} // OFF
   if(estado=='w'){ // Frente
     movimento(vel,vel,0,0);
@@ -114,6 +116,9 @@ void setup() {
   pinMode(2,INPUT);
 
   if (digitalRead(2) == LOW){encoderOldValue = false;}
+  
+  velocidade(60);
+  controle('w');
 } 
 
 void loop() { 
@@ -123,18 +128,28 @@ void loop() {
   if(digitalRead(2) != encoderOldValue ){
     encoderCounter++;
     encoderOldValue = encoderNewValue;
+    
+    Serial.print("Digital :");
+    Serial.println(encoderCounter);
   }
   
+  if (flag ==0){
+  Serial.print("Analogico: " );
+  Serial.println(analogRead(0));
+  }
   /*if ((millis() - Encoder1Timer) >= Encoder1Interval) {
     distanciaPercorrida();
   }*/
   
   //Controle 
-  velocidade(64);
-  controle(f);
+  
   
   //Andar 1 girocompletofrente
-  if (enconderCounter == 40){controle(s)}
+  if (encoderCounter == 32){velocidade(200);controle('x');flag = 1;}
+  if (encoderCounter == 33){controle('s');}
+  if (encoderCounter == 34){controle('s');}
+  if (encoderCounter == 35){controle('s'); }
+
 
 }
 
