@@ -1,24 +1,38 @@
+
+
+
+//===========================================================================
+//Variaveis 
+
 #define passoDeVelocidade 10
 
+//Pinos de controle do motor
 int esqA = 5; 
 int esqB = 6; 
 int dirA = 9; 
 int dirB = 10; 
+
+//Largura do pulso PWM nos motores
 int vel = 0; // Velocidade dos motores, Range:(0-255)
+
+//Estado de atuação dos motores
 int estado = 'i'; // inicia sem atuação nos motores
 int ultimoEstado;
-boolean flagSerial = false;
+
+//Contador do numero de voltas que o encoder realizou
 unsigned int encoderCounter=0;
 
+//Variaveis para contagem de giros do encoder
 boolean encoderOldValue = true;
 boolean encoderNewValue = true;
 
-//INTERVALO
+//Tempo que leva para chamar a função
 const unsigned long Encoder1Interval = 1000;
-//TIMER
+//Timer
 unsigned long Encoder1Timer;
 
 //===========================================================================
+//DISTANCIA PERCORRIDA
 
 void distanciaPercorrida()
 {
@@ -28,36 +42,38 @@ void distanciaPercorrida()
   Encoder1Timer = millis();
 }
 
+
 //===========================================================================
+//CONTROLE DE MOVIMENTAÇÃO INDEPENDENTE
 
-void setup() { 
-  Encoder1Timer = millis();
-  Serial.begin(38400); // Comunicação com a Rasp
-  pinMode(dirA, OUTPUT);
-  pinMode(dirB, OUTPUT);
-  pinMode(esqA, OUTPUT);
-  pinMode(esqB, OUTPUT);
+//Funçao para controle dos movimentos Frente, Ré, Direita, Esquerda e Parado
+void movimento(int a,int b,int c,int d) {
+  analogWrite(dirA, a); 
+  analogWrite(esqA, b);
+  analogWrite(dirB, c); 
+  analogWrite(esqB, d);
+  ultimoEstado = estado;
+}
 
-  pinMode(2,INPUT);
-
-  if (digitalRead(2) == LOW){encoderOldValue = false;}
-} 
+void velocidade(signed int a){
+  vel = constrain(vel + a,0,255);
+  Serial.print("Velocidade: ");
+  Serial.println(vel);
+  estado = ultimoEstado; //Variavel pra continuar o mesmo comando de movimento
+}
 //===========================================================================
+// PEGAR DADO NA SERIAL UM SÓ VEZ
 
-void loop() { 
-
-  encoderNewValue = digitalRead(2);
-  
-  if(digitalRead(2) != encoderOldValue ){
-    encoderCounter++;
-    encoderOldValue = encoderNewValue;
+void serialEvent() {
+  while (Serial.available()) {
+    estado = Serial.read(); // recebe novo dado até receber \n
   }
-  
-  if ((millis() - Encoder1Timer) >= Encoder1Interval) {
-    distanciaPercorrida();
-  }//fim Encoder1
-  
-  //Controle 
+}
+
+//===========================================================================
+//Controle
+
+void controle(char a){
   if(estado=='i'){} // OFF
   if(estado=='w'){ // Frente
     movimento(vel,vel,0,0);
@@ -84,31 +100,41 @@ void loop() {
     velocidade(-passoDeVelocidade);
   }
 }
-
 //===========================================================================
+//SETUP E LOOP
 
-//Funçao para controle dos movimentos Frente, Ré, Direita, Esquerda e Parado
-void movimento(int a,int b,int c,int d) {
-  analogWrite(dirA, a); 
-  analogWrite(esqA, b);
-  analogWrite(dirB, c); 
-  analogWrite(esqB, d);
-  ultimoEstado = estado;
-}
+void setup() { 
+  Encoder1Timer = millis();
+  Serial.begin(38400); // Comunicação com a Rasp
+  pinMode(dirA, OUTPUT);
+  pinMode(dirB, OUTPUT);
+  pinMode(esqA, OUTPUT);
+  pinMode(esqB, OUTPUT);
 
-void velocidade(signed int a){
-  vel = constrain(vel + a,0,255);
-  Serial.print("Velocidade: ");
-  Serial.println(vel);
-  estado = ultimoEstado; //Variavel pra continuar o mesmo comando de movimento
-}
-//===========================================================================
+  pinMode(2,INPUT);
 
-void serialEvent() {
-  while (Serial.available()) {
-    estado = Serial.read(); // recebe novo dado até receber \n
+  if (digitalRead(2) == LOW){encoderOldValue = false;}
+} 
+
+void loop() { 
+
+  encoderNewValue = digitalRead(2);
+  
+  if(digitalRead(2) != encoderOldValue ){
+    encoderCounter++;
+    encoderOldValue = encoderNewValue;
   }
+  
+  /*if ((millis() - Encoder1Timer) >= Encoder1Interval) {
+    distanciaPercorrida();
+  }*/
+  
+  //Controle 
+  velocidade(64);
+  controle(f);
+  
+  //Andar 1 girocompletofrente
+  if (enconderCounter == 40){controle(s)}
+
 }
 
-
-//===========================================================================
