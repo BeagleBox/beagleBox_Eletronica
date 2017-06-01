@@ -33,6 +33,7 @@ unsigned long Encoder1Timer;
 
 
 int flag = 0;
+int b = 255;
 //===========================================================================
 //DISTANCIA PERCORRIDA
 
@@ -117,7 +118,7 @@ void setup() {
 
   if (digitalRead(2) == LOW){encoderOldValue = false;}
   
-  velocidade(60);
+  velocidade(40);
   controle('w');
 } 
 
@@ -137,19 +138,11 @@ void loop() {
   Serial.print("Analogico: " );
   Serial.println(analogRead(0));
   }
-  /*if ((millis() - Encoder1Timer) >= Encoder1Interval) {
-    distanciaPercorrida();
-  }*/
-  
-  //Controle 
-  
-  
-  //Andar 1 girocompletofrente
-  if (encoderCounter == 32){velocidade(200);controle('x');flag = 1;}
-  if (encoderCounter == 33){controle('s');}
-  if (encoderCounter == 34){controle('s');}
-  if (encoderCounter == 35){controle('s'); }
 
+  //Andar 1 girocompletofrente
+  if (encoderCounter == 40){velocidade(b);controle('x');flag = 1; b = b-20;}
+  if (encoderCounter == 41){controle('s');}
+  
 
 }
 
