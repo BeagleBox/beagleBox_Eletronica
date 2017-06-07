@@ -14,6 +14,8 @@ Funcionalidades:
 //Bibliotecas
 //===========================================================================
 
+
+
 //===========================================================================
 //Definições
 //===========================================================================
@@ -38,6 +40,11 @@ unsigned int encoderCounter=0;
 //Variaveis para contagem de giros do encoder
 boolean encoderOldValue = true;
 boolean encoderNewValue = true;
+//Tempo que leva para chamar a função
+const unsigned long Encoder1Interval = 1000;
+//Timer
+unsigned long Encoder1Timer;
+int flagEncoder=0;
 
 //ULTRASSOM
 
@@ -107,129 +114,19 @@ void controle(char estado){
 }
 
 //===========================================================================
-//Algoritmo
-//===========================================================================
-
-void Wavefront(){
-  switch (orientacao) {
-    case 'N':
-      if(mapa[i-1][j] == numeroDaRota ){
-        moverParaFrente();
-      }
-      else if(mapa[i][j+1] == numeroDaRota){
-        girar(D);
-        orientacao = 'L';
-        moverParaFrente();
-      }
-      else if(mapa[i][j-1] == numeroDaRota){
-        girar(E);
-        orientacao = 'O';
-        moverParaFrente();
-      }
-      else if(mapa[i+1][j] == numeroDaRota){
-        girar(T);
-        orientacao = 'S';
-        moverParaFrente();
-      }
-
-    break;
-    case 'S':
-      if(mapa[i+1][j] == numeroDaRota ){
-        moverParaFrente();
-      }
-      else if(mapa[i][j-1] == numeroDaRota){
-        girar(D);
-        orientacao = 'O';
-        moverParaFrente();
-      }
-      else if(mapa[i][j+1] == numeroDaRota){
-        girar(E);
-        orientacao = 'L';
-        moverParaFrente();
-      }
-      else if(mapa[i+1][j] == numeroDaRota){
-        girar(T);
-        orientacao = 'N';
-        moverParaFrente();
-      }
-
-    break;
-    case 'L':
-      if(mapa[i][j+1] == numeroDaRota ){
-        moverParaFrente();
-      }
-      else if(mapa[i+1][j] == numeroDaRota){
-        girar(D);
-        orientacao = 'S';
-        moverParaFrente();
-      }
-      else if(mapa[i-1][j] == numeroDaRota){
-        girar(E);
-        orientacao = 'N';
-        moverParaFrente();
-      }
-      else if(mapa[i][j-1] == numeroDaRota){
-        girar(T);
-        orientacao = 'S';
-        moverParaFrente();
-      }
-
-    break;
-    case 'O':
-      if(mapa[i][j-1] == numeroDaRota ){
-        moverParaFrente();
-      }
-      else if(mapa[i-1][j] == numeroDaRota){
-        girar(D);
-        orientacao = 'N';
-        moverParaFrente();
-      }
-      else if(mapa[i+1][j] == numeroDaRota){
-        girar(E);
-        orientacao = 'S';
-        moverParaFrente();
-      }
-      else if(mapa[i][j+1] == numeroDaRota){
-        girar(T);
-        orientacao = 'L';
-        moverParaFrente();
-      }
-
-    break;
-
-  }
-  
-  numeroDaRota--; 
-}
-
-
-
-
-//===========================================================================
 //Setup
 //===========================================================================
 
 void setup() { 
-  
+  Encoder1Timer = millis();
   Serial.begin(38400); // Comunicação com a Rasp
-  
   pinMode(motorDianteiroDireita, OUTPUT);
   pinMode(motorTraseiroDireita, OUTPUT);
   pinMode(motorDianteiroEsquerda, OUTPUT);
   pinMode(motorTraseiroEsquerda, OUTPUT);
+
   pinMode(2,INPUT);
 
-  int mapa[8][8] = {{0,0,0,0,0,0,0},
-                    {0,5,4,3,2,G,0}
-                    {0,6,5,4,3,2,0}
-                    {0,7,6,5,4,3,0}
-                    {0,8,7,W,W,W,0}
-                    {0,9,8,W,0,0,0}
-                    {0,R,9,W,0,0,0}
-                    {0,0,0,0,0,0,0}};
-
-  
-  
   if (digitalRead(2) == LOW){encoderOldValue = false;}
   
   velocidade(100);
@@ -242,24 +139,34 @@ void setup() {
 
 void loop() { 
 
-  Wavefront();
-  
-}
-
-
-void funcaoEncoder(){
-  
   encoderNewValue = digitalRead(2);
-  
-  if (digitalRead(2) != encoderOldValue ){
+  //if (flagEncoder== 0){ 
+  if(digitalRead(2) != encoderOldValue ){
     encoderCounter++;
     encoderOldValue = encoderNewValue;
+    
+    Serial.print("Digital :");
+    Serial.println(encoderCounter);
+  }
+  //}
+  if (flag ==0){
+  Serial.print("Analogico: " );
+  Serial.println(analogRead(0));
   }
 
-}
   //Andar 1 girocompletofrente
   if (encoderCounter == 100){velocidade(b);controle('x');flag = 1; b = b-20;}
   if (encoderCounter == 101){b=255;velocidade(100);controle('d'); delay(500); controle('w');}
+  if(encoderCounter == 220){velocidade(b);controle('x');flag = 1; b = b-20;}
+  if (encoderCounter == 221){b=255;velocidade(100);controle('d'); delay(500); controle('w');}
+  if (encoderCounter == 300){velocidade(b);controle('x');flag = 1; b = b-20;}
   if (encoderCounter > 301){controle('s');}
-
+  
+  
+  
+  
+  //Girar 45 graus
+  
+  
 }
+
