@@ -245,21 +245,3 @@ void loop() {
   Wavefront();
   
 }
-
-
-void funcaoEncoder(){
-  
-  encoderNewValue = digitalRead(2);
-  
-  if (digitalRead(2) != encoderOldValue ){
-    encoderCounter++;
-    encoderOldValue = encoderNewValue;
-  }
-
-}
-  //Andar 1 girocompletofrente
-  if (encoderCounter == 100){velocidade(b);controle('x');flag = 1; b = b-20;}
-  if (encoderCounter == 101){b=255;velocidade(100);controle('d'); delay(500); controle('w');}
-  if (encoderCounter > 301){controle('s');}
-
-}
