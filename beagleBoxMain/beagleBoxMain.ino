@@ -52,13 +52,7 @@ int b = 255;
 //===========================================================================
 
 //DISTANCIA PERCORRIDA
-void distanciaPercorrida()
-{
-  Serial.print("Numero de rotacoes: ");  
-  Serial.println(encoderCounter,DEC);  
-  encoderCounter=0;  //  reset counter to zero
-  Encoder1Timer = millis();
-}
+void distanciaPercorrida(){}
 
 //CONTROLE DE ACIONAMENTO DOS MOTORES
 void movimento(int a,int b,int c,int d) {
@@ -240,5 +234,5 @@ void setup() {
 
 void loop() { 
 
-  
+  loopBussola();
 }
