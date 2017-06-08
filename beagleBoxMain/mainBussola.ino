@@ -1,15 +1,8 @@
 
-#include "I2Cdev.h"
-#include "MPU6050_6Axis_MotionApps20.h"
-
-#if I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
-    #include "Wire.h"
-#endif
 
 MPU6050 mpu;
 #define OUTPUT_READABLE_YAWPITCHROLL
-#define LED_PIN 13 
-bool blinkState = false;
+
 
 // MPU control/status vars
 bool dmpReady = false;  // set true if DMP init was successful
@@ -88,15 +81,13 @@ void setupBussola() {
         Serial.println(F(")"));
     }
 
-    // configure LED for output
-    pinMode(LED_PIN, OUTPUT);
 }
 
 // ================================================================
 // ===                    MAIN PROGRAM LOOP                     ===
 // ================================================================
 
-void loopBussola() {
+void Orientacao() {
     // if programming failed, don't try to do anything
     if (!dmpReady) return;
 
@@ -147,10 +138,6 @@ void loopBussola() {
             //delay(100);
         #endif
 
-
-        // blink LED to indicate activity
-        blinkState = !blinkState;
-        digitalWrite(LED_PIN, blinkState);
     }
 }
 

@@ -14,187 +14,43 @@ Funcionalidades:
 //Bibliotecas
 //===========================================================================
 
+//BUSSOLA
+#include "I2Cdev.h"
+#include "MPU6050_6Axis_MotionApps20.h"
+
+#if I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
+    #include "Wire.h"
+#endif
+
 //===========================================================================
 //Definições
 //===========================================================================
 
-#define passoDeVelocidade 10
+#define LED_PIN 13 
 
 //===========================================================================
 //Variaveis 
 //===========================================================================
 
-//MOTOR
-int motorDianteiroEsquerda = 5; 
-int motorTraseiroEsquerda = 6; 
-int motorDianteiroDireita = 9; 
-int motorTraseiroDireita = 10; 
-// Velocidade dos motores, pusol PWM: (0-255)
-int velocidadeMotor = 0; 
-
-//ENCODER
-//Contador do numero de voltas que o encoder realizou
-unsigned int encoderCounter=0;
-//Variaveis para contagem de giros do encoder
-boolean encoderOldValue = true;
-boolean encoderNewValue = true;
-
-//ULTRASSOM
-
-//ACELERÔMETRO E GIROSCÓPIO
-
-//FLAGS E VARIÁVEIS DE CONTROLE
-int flag = 0;
-int b = 255;
+bool blinkState = false;
 
 //===========================================================================
 //Funções
 //===========================================================================
 
-//DISTANCIA PERCORRIDA
-void distanciaPercorrida(){}
-
-//CONTROLE DE ACIONAMENTO DOS MOTORES
-void movimento(int a,int b,int c,int d) {
-  analogWrite(motorDianteiroDireita, a); 
-  analogWrite(motorDianteiroEsquerda, b);
-  analogWrite(motorTraseiroDireita, c); 
-  analogWrite(motorTraseiroEsquerda, d);
-  //ultimoEstado = estado;
-}
-
-//CONTROLE DE VELOCIDADE
-void velocidade(signed int a){
-  velocidadeMotor = constrain(velocidadeMotor + a,0,255);
-  Serial.print("Velocidade: ");
-  Serial.println(velocidadeMotor);
-  //estado = ultimoEstado; //Variavel pra continuar o mesmo comando de movimento
-}
-
-//AÇÃO DO ROBO
-void controle(char estado){
-  if(estado=='i'){} // OFF
-  if(estado=='w'){ // Frente
-    movimento(velocidadeMotor,velocidadeMotor,0,0);
-    //Serial.println ("FRENTE");
-  }
-  if(estado=='d'){ // Direita
-    movimento(velocidadeMotor,0,0,velocidadeMotor);
-    //Serial.println ("Direita");
-  }
-  if(estado=='a'){ // Esquerda
-    movimento(0,velocidadeMotor,0,velocidadeMotor);
-  } 
-  if(estado=='x'){ // Ré
-    movimento(0,0,velocidadeMotor,velocidadeMotor);
-  }
-  if(estado=='s'){ // Parado
-    movimento(0,0,0,0);
-  }
-  //Velocidade 
-  if(estado=='q'){ // Aumenta a velocidade dos motores
-    velocidade(passoDeVelocidade);
-  }
-  if(estado=='e'){ // Diminui a velocidade dos motores
-    velocidade(-passoDeVelocidade);
-  }
-}
-
-//===========================================================================
-//Algoritmo
-//===========================================================================
-/*
-void Wavefront(){
-  switch (orientacao) {
-    case 'N':
-      if(mapa[i-1][j] == numeroDaRota ){
-        moverParaFrente();
-      }
-      else if(mapa[i][j+1] == numeroDaRota){
-        girar(D);
-        orientacao = 'L';
-        moverParaFrente();
-      }
-      else if(mapa[i][j-1] == numeroDaRota){
-        girar(E);
-        orientacao = 'O';
-        moverParaFrente();
-      }
-      else if(mapa[i+1][j] == numeroDaRota){
-        girar(T);
-        orientacao = 'S';
-        moverParaFrente();
-      }
-
-    break;
-    case 'S':
-      if(mapa[i+1][j] == numeroDaRota ){
-        moverParaFrente();
-      }
-      else if(mapa[i][j-1] == numeroDaRota){
-        girar(D);
-        orientacao = 'O';
-        moverParaFrente();
-      }
-      else if(mapa[i][j+1] == numeroDaRota){
-        girar(E);
-        orientacao = 'L';
-        moverParaFrente();
-      }
-      else if(mapa[i+1][j] == numeroDaRota){
-        girar(T);
-        orientacao = 'N';
-        moverParaFrente();
-      }
-
-    break;
-    case 'L':
-      if(mapa[i][j+1] == numeroDaRota ){
-        moverParaFrente();
-      }
-      else if(mapa[i+1][j] == numeroDaRota){
-        girar(D);
-        orientacao = 'S';
-        moverParaFrente();
-      }
-      else if(mapa[i-1][j] == numeroDaRota){
-        girar(E);
-        orientacao = 'N';
-        moverParaFrente();
-      }
-      else if(mapa[i][j-1] == numeroDaRota){
-        girar(T);
-        orientacao = 'S';
-        moverParaFrente();
-      }
-
-    break;
-    case 'O':
-      if(mapa[i][j-1] == numeroDaRota ){
-        moverParaFrente();
-      }
-      else if(mapa[i-1][j] == numeroDaRota){
-        girar(D);
-        orientacao = 'N';
-        moverParaFrente();
-      }
-      else if(mapa[i+1][j] == numeroDaRota){
-        girar(E);
-        orientacao = 'S';
-        moverParaFrente();
-      }
-      else if(mapa[i][j+1] == numeroDaRota){
-        girar(T);
-        orientacao = 'L';
-        moverParaFrente();
-      }
-
-    break;
-
-  }
-  
-  numeroDaRota--; 
-}
+/*Algoritmo
+wavefront                 ALGORITMO DE RESOLUÇÃO DO MAPA
+*/
+/*Bussola
+orientação                LOOP DA BUSSOLA QUE INFORMA A ORIENTAÇÃO DO ROBO
+*/
+/*Encoder
+distanciaPercorrida       DISTANCIA QUE O ROBO ANDOU EM (cm)
+*/
+/*PWM
+movimento                 CONTROLE DE ACIONAMENTO DOS MOTORES
+velocidade                CONTROLE DE VELOCIDADE
+controle                  AÇÃO DO ROBO
 */
 
 //===========================================================================
@@ -202,30 +58,22 @@ void Wavefront(){
 //===========================================================================
 
 void setup() { 
-  
+
+  //SERIAL
   Serial.begin(38400); // Comunicação com a Rasp
-  
-  pinMode(motorDianteiroDireita, OUTPUT);
-  pinMode(motorTraseiroDireita, OUTPUT);
-  pinMode(motorDianteiroEsquerda, OUTPUT);
-  pinMode(motorTraseiroEsquerda, OUTPUT);
-  pinMode(2,INPUT);
 
-  int mapa[8][8] = {{0,0,0,0,0,0,0},
-                    {0,5,4,3,2,G,0}
-                    {0,6,5,4,3,2,0}
-                    {0,7,6,5,4,3,0}
-                    {0,8,7,W,W,W,0}
-                    {0,9,8,W,0,0,0}
-                    {0,R,9,W,0,0,0}
-                    {0,0,0,0,0,0,0}};
-
+  //INICIALIZAÇÃO DOS SENSORES
+  Serial.println("Inicializando Sensores...");
   setupBussola();
+  Serial.println("Bussola Inicializado.");
+  setupEncoder();
+  Serial.println("Encoder Inicializado.");
+  setupPWMControl();
+  Serial.println("PWMControl Inicializado.");
+
+  //LED de indicação de atividade
+  pinMode(LED_PIN, OUTPUT);
   
-  //if (digitalRead(2) == LOW){encoderOldValue = false;}
-  
-  //velocidade(100);
-  //controle('w');
 } 
 
 //===========================================================================
@@ -234,5 +82,9 @@ void setup() {
 
 void loop() { 
 
-  loopBussola();
+
+  
+  //LED para indicar atividade
+  blinkState = !blinkState;
+  digitalWrite(LED_PIN, blinkState);
 }
