@@ -109,7 +109,7 @@ void controle(char estado){
 //===========================================================================
 //Algoritmo
 //===========================================================================
-
+/*
 void Wavefront(){
   switch (orientacao) {
     case 'N':
@@ -201,9 +201,7 @@ void Wavefront(){
   
   numeroDaRota--; 
 }
-
-
-
+*/
 
 //===========================================================================
 //Setup
@@ -228,12 +226,12 @@ void setup() {
                     {0,R,9,W,0,0,0}
                     {0,0,0,0,0,0,0}};
 
+  setupBussola();
   
+  //if (digitalRead(2) == LOW){encoderOldValue = false;}
   
-  if (digitalRead(2) == LOW){encoderOldValue = false;}
-  
-  velocidade(100);
-  controle('w');
+  //velocidade(100);
+  //controle('w');
 } 
 
 //===========================================================================
@@ -242,6 +240,5 @@ void setup() {
 
 void loop() { 
 
-  Wavefront();
   
 }
