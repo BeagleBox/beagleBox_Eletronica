@@ -87,9 +87,9 @@ void setupBussola() {
 // ===                    MAIN PROGRAM LOOP                     ===
 // ================================================================
 
-void Orientacao() {
+int orientacao() {
     // if programming failed, don't try to do anything
-    if (!dmpReady) return;
+    if (!dmpReady) return 0;
 
     // wait for MPU interrupt or extra packet(s) available
     while (!mpuInterrupt && fifoCount < packetSize) {
@@ -135,9 +135,11 @@ void Orientacao() {
             //Serial.print("\t Psi: ");
             ///Serial.print(" ");
             ///Serial.println(ypr[0] * 180/M_PI);
-            //delay(100);
+            bussola = (ypr[0] * 180/M_PI);
+            delay(100);
         #endif
 
     }
+    
 }
 

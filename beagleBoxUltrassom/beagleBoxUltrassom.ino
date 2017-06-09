@@ -13,7 +13,7 @@ NewPing sonar[SONAR_NUM] = {   // Sensor object array.
 };
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(57600);
 }
 
 void loop() { 
