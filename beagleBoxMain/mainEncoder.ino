@@ -26,3 +26,16 @@ void setupEncoder(){
   pinMode(encoderEsquerda,INPUT);  
   pinMode(encoderDireita,INPUT);  
 }
+
+void leituraEncoder(){
+  
+  encoderNewValue = digitalRead(encoderEsquerda);
+
+  if(digitalRead(2) != encoderOldValue ){
+  encoderCounter++;
+  encoderOldValue = encoderNewValue;
+  }
+
+  //Adicionando por causa do Timer
+  encoderTimer = millis();
+}

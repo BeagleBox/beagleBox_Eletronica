@@ -17,7 +17,7 @@ Funcionalidades:
 #include "I2Cdev.h"
 #include "MPU6050_6Axis_MotionApps20.h"
 #if I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
-    #include "Wire.h"
+  #include "Wire.h"
 #endif
 
 //ULTRASSOM
@@ -29,17 +29,28 @@ Funcionalidades:
 
 #define LED_PIN 13 
 #define intervaloCalibracao 20000
+
 //===========================================================================
 //Variaveis 
 //===========================================================================
 
+//inidicação de atividade
 bool blinkState = false;
-float bussola = 0;
+
+int bussola = 0;
 float ultrassomDireita = 0;
 float ultrassomCentro = 0;
 float ultrassomEsquerda = 0;
-unsigned long time;
 
+//INTERVALOS DE LEITURA DOS SINAIS
+const unsigned long orientacaoIntervalo = 1;
+const unsigned long ultrassomIntervalo = 250;
+const unsigned long encoderIntervalo = 1000;
+
+//TIMERS PARA REPETIR A LEITURA DO SINAL
+unsigned long orientacaoTimer;
+unsigned long ultrassomTimer;
+unsigned long encoderTimer;
 
 //===========================================================================
 //Funções
@@ -49,7 +60,7 @@ unsigned long time;
 wavefront                 ALGORITMO DE RESOLUÇÃO DO MAPA
 */
 /*Bussola
-orientação                LOOP DA BUSSOLA QUE INFORMA A ORIENTAÇÃO DO ROBO
+orientacao                LOOP DA BUSSOLA QUE INFORMA A ORIENTACAO DO ROBO
 */
 /*Encoder
 distanciaPercorrida       DISTANCIA QUE O ROBO ANDOU EM (cm)
@@ -71,7 +82,6 @@ void setup() {
 
   //SERIAL
   Serial.begin(38400); // Comunicação com a Rasp
-  delay(50);
   //INICIALIZAÇÃO DOS SENSORES
   Serial.println("Inicializando Sensores...");
   setupBussola();
@@ -83,6 +93,11 @@ void setup() {
   setupUltrassom();
   Serial.println("Ultrassom Inicializado.");
 
+  //tempo que foi chamado
+  orientacaoTimer = millis();
+  ultrassomTimer = millis();
+  encoderTimer = millis();
+
   //LED de indicação de atividade
   pinMode(LED_PIN, OUTPUT);
   
@@ -93,11 +108,22 @@ void setup() {
 //===========================================================================
 
 void loop() { 
-  time = millis();
-  orientacao();
   
-  if(time > intervaloCalibracao){
+  if ((millis() - orientacaoTimer) >= orientacaoIntervalo) {
+    leituraOrientacao();
+  }//fim da leitura
+
+  if ((millis() - ultrassomTimer) >= ultrassomIntervalo) {
     leituraUltrassom();
+  }//fim da leitura
+
+  if ((millis() - encoderTimer) >= encoderTimer) {
+    leituraEncoder();
+  }//fim da leitura
+  
+
+  if(millis() > intervaloCalibracao){
+    //leituraUltrassom();
     Serial.print("Bussola: ");
     Serial.println(bussola);
     Serial.print("Ultrassom Direita: ");
@@ -109,7 +135,7 @@ void loop() {
     
   }
   else{}
-  
+
   //LED para indicar atividade
   blinkState = !blinkState;
   digitalWrite(LED_PIN, blinkState);

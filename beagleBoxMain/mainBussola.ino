@@ -87,7 +87,7 @@ void setupBussola() {
 // ===                    MAIN PROGRAM LOOP                     ===
 // ================================================================
 
-int orientacao() {
+int leituraOrientacao() {
     // if programming failed, don't try to do anything
     if (!dmpReady) return 0;
 
@@ -107,7 +107,7 @@ int orientacao() {
     if ((mpuIntStatus & 0x10) || fifoCount == 1024) {
         // reset so we can continue cleanly
         mpu.resetFIFO();
-        //Serial.println(F("FIFO overflow!"));
+        Serial.println(F("FIFO overflow!"));
 
     // otherwise, check for DMP data ready interrupt (this should happen frequently)
     } else if (mpuIntStatus & 0x02) {
@@ -139,6 +139,8 @@ int orientacao() {
             delay(100);
         #endif
 
+            //Adicionando por causa do Timer
+            orientacaoTimer = millis();
     }
     
 }

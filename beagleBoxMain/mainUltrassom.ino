@@ -37,17 +37,19 @@ void setupUltrassom(){
 void leituraUltrassom() { 
   for (uint8_t i = 0; i< SONAR_NUM; i++){
     // Espera 50ms entre os pings, não pode diminuir mais do que para 30ms
-    if (i==1){
+    if (i==0){
     ultrassomDireita = sonar[i].convert_cm(sonar[i].ping_median(10)); // Calcula a media entre 10 pulsos e converte o resultado para cm
-    delay(50);
+    delay(40);
     }
     if (i==1){
     ultrassomCentro = sonar[i].convert_cm(sonar[i].ping_median(10)); // Calcula a media entre 10 pulsos e converte o resultado para cm
-    delay(50);
+    delay(40);
     }
-    if (i==1){
+    if (i==2){
     ultrassomEsquerda = sonar[i].convert_cm(sonar[i].ping_median(10)); // Calcula a media entre 10 pulsos e converte o resultado para cm
-    delay(50);
+    delay(40);
     }
   }
+  //Adicionando por causa do Timer
+  ultrassomTimer = millis();
 }
