@@ -3,8 +3,8 @@
 //Definições
 //===========================================================================
 
-# define encoderEsquerda 12
-# define encoderDireita 11
+# define pinoEncoderEsquerda 12
+# define pinoEncoderDireita 11
 
 //===========================================================================
 //Variaveis 
@@ -23,19 +23,21 @@ boolean encoderNewValue = true;
 void distanciaPercorrida(){}
 
 void setupEncoder(){
-  pinMode(encoderEsquerda,INPUT);  
-  pinMode(encoderDireita,INPUT);  
+  pinMode(pinoEncoderEsquerda,INPUT);  
+  pinMode(pinoEncoderDireita,INPUT); 
+  if (digitalRead(pinoEncoderEsquerda) == LOW){encoderOldValue = false;} 
 }
 
 void leituraEncoder(){
   
-  encoderNewValue = digitalRead(encoderEsquerda);
+  encoderNewValue = digitalRead(pinoEncoderEsquerda);
 
-  if(digitalRead(2) != encoderOldValue ){
+  if(digitalRead(pinoEncoderEsquerda) != encoderOldValue ){
   encoderCounter++;
   encoderOldValue = encoderNewValue;
   }
 
+  encoderEsquerda = encoderCounter * 0.508938;
   //Adicionando por causa do Timer
   encoderTimer = millis();
 }

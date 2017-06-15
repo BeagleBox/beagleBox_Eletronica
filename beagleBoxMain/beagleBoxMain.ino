@@ -28,7 +28,7 @@ Funcionalidades:
 //===========================================================================
 
 #define LED_PIN 13 
-#define intervaloCalibracao 20000
+#define intervaloCalibracao 15000
 
 //===========================================================================
 //Variaveis 
@@ -41,11 +41,13 @@ int bussola = 0;
 float ultrassomDireita = 0;
 float ultrassomCentro = 0;
 float ultrassomEsquerda = 0;
+float encoderEsquerda = 0;
+float encoderDireita = 0;
 
 //INTERVALOS DE LEITURA DOS SINAIS
-const unsigned long orientacaoIntervalo = 1;
+const unsigned long orientacaoIntervalo = 10;
 const unsigned long ultrassomIntervalo = 250;
-const unsigned long encoderIntervalo = 1000;
+const unsigned long encoderIntervalo = 5;
 
 //TIMERS PARA REPETIR A LEITURA DO SINAL
 unsigned long orientacaoTimer;
@@ -81,7 +83,7 @@ leituraUltrassom
 void setup() { 
 
   //SERIAL
-  Serial.begin(38400); // Comunicação com a Rasp
+  Serial.begin(115200); // Comunicação com a Rasp
   //INICIALIZAÇÃO DOS SENSORES
   Serial.println("Inicializando Sensores...");
   setupBussola();
@@ -101,6 +103,8 @@ void setup() {
   //LED de indicação de atividade
   pinMode(LED_PIN, OUTPUT);
   
+  //intervalo de calibração dos sensores
+  while(millis() < intervaloCalibracao);
 } 
 
 //===========================================================================
@@ -109,32 +113,33 @@ void setup() {
 
 void loop() { 
   
-  if ((millis() - orientacaoTimer) >= orientacaoIntervalo) {
+  /*if ((millis() - orientacaoTimer) >= orientacaoIntervalo) {
     leituraOrientacao();
   }//fim da leitura
-
-  if ((millis() - ultrassomTimer) >= ultrassomIntervalo) {
+*/
+  /*if ((millis() - ultrassomTimer) >= ultrassomIntervalo) {
     leituraUltrassom();
   }//fim da leitura
-
-  if ((millis() - encoderTimer) >= encoderTimer) {
+*/
+  if ((millis() - encoderTimer) >= encoderIntervalo) {
     leituraEncoder();
   }//fim da leitura
   
 
-  if(millis() > intervaloCalibracao){
+  //if(millis() > intervaloCalibracao){
     //leituraUltrassom();
-    Serial.print("Bussola: ");
-    Serial.println(bussola);
-    Serial.print("Ultrassom Direita: ");
+    /*Serial.print("Bussola: ");
+    Serial.println(bussola);*/
+    /*Serial.print("Ultrassom Direita: ");
     Serial.println(ultrassomDireita);
     Serial.print("Ultrassom Centro: ");
     Serial.println(ultrassomCentro);
     Serial.print("Ultrassom Esquerda: ");
     Serial.println(ultrassomEsquerda);
-    
-  }
-  else{}
+    Serial.print("Encoder Esquerda: ");*/
+    Serial.println(encoderEsquerda);
+  //}
+  //else{}
 
   //LED para indicar atividade
   blinkState = !blinkState;

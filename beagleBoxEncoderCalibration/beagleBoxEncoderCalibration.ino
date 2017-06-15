@@ -125,11 +125,11 @@ void setup() {
   pinMode(motorDianteiroEsquerda, OUTPUT);
   pinMode(motorTraseiroEsquerda, OUTPUT);
 
-  pinMode(2,INPUT);
+  pinMode(12,INPUT);
 
-  if (digitalRead(2) == LOW){encoderOldValue = false;}
+  if (digitalRead(12) == LOW){encoderOldValue = false;}
   
-  velocidade(100);
+  velocidade(255);
   controle('w');
 } 
 
@@ -139,6 +139,7 @@ void setup() {
 
 void loop() { 
 
+  /*
   encoderNewValue = digitalRead(2);
   //if (flagEncoder== 0){ 
   if(digitalRead(2) != encoderOldValue ){
@@ -161,10 +162,22 @@ void loop() {
   if (encoderCounter == 221){b=255;velocidade(100);controle('d'); delay(500); controle('w');}
   if (encoderCounter == 300){velocidade(b);controle('x');flag = 1; b = b-20;}
   if (encoderCounter > 301){controle('s');}
+  */
   
+  if ((millis() - Encoder1Timer) >= Encoder1Interval) {
+    distanciaPercorrida();
+  }//fim da leitura
+
+  encoderNewValue = digitalRead(12);
+  //if (flagEncoder== 0){ 
+  if(digitalRead(12) != encoderOldValue ){
+    encoderCounter++;
+    encoderOldValue = encoderNewValue;
+    
+  }
   
-  
-  
+  //}
+
   //Girar 45 graus
   
   
