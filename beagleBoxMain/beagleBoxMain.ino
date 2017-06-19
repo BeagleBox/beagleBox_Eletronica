@@ -45,9 +45,11 @@ float encoderEsquerda = 0;
 float encoderDireita = 0;
 
 //INTERVALOS DE LEITURA DOS SINAIS
-const unsigned long orientacaoIntervalo = 10;
-const unsigned long ultrassomIntervalo = 250;
-const unsigned long encoderIntervalo = 5;
+const unsigned long orientacaoIntervalo = 100;
+const unsigned long ultrassomIntervalo = 150;
+const unsigned long encoderIntervalo = 1;
+
+
 
 //TIMERS PARA REPETIR A LEITURA DO SINAL
 unsigned long orientacaoTimer;
@@ -98,13 +100,18 @@ void setup() {
   //tempo que foi chamado
   orientacaoTimer = millis();
   ultrassomTimer = millis();
+  // ultrassomCentroTimer = millis();
+  // ultrassomEsquerdaTimer = millis();
   encoderTimer = millis();
 
   //LED de indicação de atividade
   pinMode(LED_PIN, OUTPUT);
   
   //intervalo de calibração dos sensores
-  while(millis() < intervaloCalibracao);
+  Serial.println("Calibrando sensores...");
+  while(millis() < intervaloCalibracao){};
+  Serial.println("PRONTO!");
+  delay(500);
 } 
 
 //===========================================================================
@@ -115,28 +122,31 @@ void loop() {
   
   /*if ((millis() - orientacaoTimer) >= orientacaoIntervalo) {
     leituraOrientacao();
+  }//fim da leitura*/
+  if ((millis() - ultrassomTimer) >= ultrassomIntervalo) {
+    leituraUltrassomDireita();
   }//fim da leitura
-*/
-  /*if ((millis() - ultrassomTimer) >= ultrassomIntervalo) {
-    leituraUltrassom();
+   if ((millis() - ultrassomTimer + 40) >= ultrassomIntervalo) {
+    leituraUltrassomCentro();
   }//fim da leitura
-*/
+   if ((millis() - ultrassomTimer + 80) >= ultrassomIntervalo) {
+    leituraUltrassomEsquerda();
+  }//fim da leitura
   if ((millis() - encoderTimer) >= encoderIntervalo) {
     leituraEncoder();
   }//fim da leitura
   
 
   //if(millis() > intervaloCalibracao){
-    //leituraUltrassom();
     /*Serial.print("Bussola: ");
     Serial.println(bussola);*/
-    /*Serial.print("Ultrassom Direita: ");
+    Serial.print("Ultrassom Direita: ");
     Serial.println(ultrassomDireita);
     Serial.print("Ultrassom Centro: ");
     Serial.println(ultrassomCentro);
     Serial.print("Ultrassom Esquerda: ");
     Serial.println(ultrassomEsquerda);
-    Serial.print("Encoder Esquerda: ");*/
+    Serial.print("Encoder Esquerda: ");
     Serial.println(encoderEsquerda);
   //}
   //else{}

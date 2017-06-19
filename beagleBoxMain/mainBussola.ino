@@ -49,7 +49,7 @@ void setupBussola() {
     // initialize serial communication
     // (115200 chosen because it is required for Teapot Demo output, but it's
     // really up to you depending on your project)
-    Serial.begin(115200);
+    // Inivializado na Main --> Serial.begin(115200);
     //while (!Serial); // wait for Leonardo enumeration, others continue immediately
     mpu.initialize();
     devStatus = mpu.dmpInitialize();
@@ -140,7 +140,7 @@ int leituraOrientacao() {
         #endif
 
             //Adicionando por causa do Timer
-            orientacaoTimer = millis();
+            //orientacaoTimer = millis();
     }
     
 }

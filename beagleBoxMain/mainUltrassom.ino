@@ -3,7 +3,11 @@
 //Definições
 //===========================================================================
 
-#define SONAR_NUM 3      // Numero de sensores.
+#define SONAR_NUM 3
+#define SONAR_DIREITA 0      // Numero do sensor no array
+#define SONAR_CENTRO 1      // Numero do sensor no array
+#define SONAR_ESQUERDA 2      // Numero do sensor no array
+#define NUMERO_MEDICOES 10
 #define MAX_DISTANCE 400 // Maxima distancia (em cm).
 #define uS1 7 // pino que recebe o ping(trig/echo)
 #define uS2 3
@@ -12,8 +16,6 @@
 //===========================================================================
 //Variaveis 
 //===========================================================================
-int flagUltrassom = 0;
-//float ultrassom1 = 0;
 
 NewPing sonar[SONAR_NUM] = {   // Sensor object array.
   NewPing(uS1, uS1, MAX_DISTANCE), // trig/echo/maxDist 
@@ -24,32 +26,21 @@ NewPing sonar[SONAR_NUM] = {   // Sensor object array.
 //===========================================================================
 //Funções
 //===========================================================================
-void setupUltrassom(){
-  while(flagUltrassom < 4){
-  for (uint8_t i = 0; i < SONAR_NUM; i++) { // Loop
-    delay(50); // Espera 50ms entre os pings, não pode diminuir mais do que para 30ms
-    //ultrassom[i] = sonar[i].convert_cm(sonar[i].ping_median(5)); // Calcula a media entre 10 pulsos e converte o resultado para cm
-  } 
-  flagUltrassom++;
-  }
+void setupUltrassom(){}
+
+void leituraUltrassomDireita() {  
+  ultrassomDireita = sonar[SONAR_DIREITA].convert_cm(sonar[SONAR_DIREITA].ping_median(NUMERO_MEDICOES)); // Calcula a media entre 10 pulsos e converte o resultado para cm  
+  ultrassomTimer= millis();
 }
 
-void leituraUltrassom() { 
-  for (uint8_t i = 0; i< SONAR_NUM; i++){
-    // Espera 50ms entre os pings, não pode diminuir mais do que para 30ms
-    if (i==0){
-    ultrassomDireita = sonar[i].convert_cm(sonar[i].ping_median(10)); // Calcula a media entre 10 pulsos e converte o resultado para cm
-    delay(40);
-    }
-    if (i==1){
-    ultrassomCentro = sonar[i].convert_cm(sonar[i].ping_median(10)); // Calcula a media entre 10 pulsos e converte o resultado para cm
-    delay(40);
-    }
-    if (i==2){
-    ultrassomEsquerda = sonar[i].convert_cm(sonar[i].ping_median(10)); // Calcula a media entre 10 pulsos e converte o resultado para cm
-    delay(40);
-    }
-  }
-  //Adicionando por causa do Timer
-  ultrassomTimer = millis();
+void leituraUltrassomCentro() {    
+  ultrassomCentro = sonar[SONAR_CENTRO].convert_cm(sonar[SONAR_CENTRO].ping_median(NUMERO_MEDICOES)); // Calcula a media entre 10 pulsos e converte o resultado para cm
+  //ultrassomTimer= millis();
 }
+    
+void leituraUltrassomEsquerda() { 
+  ultrassomEsquerda = sonar[SONAR_ESQUERDA].convert_cm(sonar[SONAR_ESQUERDA].ping_median(NUMERO_MEDICOES)); // Calcula a media entre 10 pulsos e converte o resultado para cm
+  //ultrassomTimer= millis();
+}
+
+ 

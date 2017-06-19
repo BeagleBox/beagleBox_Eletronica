@@ -51,6 +51,7 @@ int flagEncoder=0;
 //ACELERÔMETRO E GIROSCÓPIO
 
 //FLAGS E VARIÁVEIS DE CONTROLE
+int i=0; //TESTE APAGAR
 int flag = 0;
 int b = 255;
 
@@ -62,7 +63,9 @@ int b = 255;
 void distanciaPercorrida()
 {
   Serial.print("Numero de rotacoes: ");  
-  Serial.println(encoderCounter,DEC);  
+  Serial.println(encoderCounter,DEC);
+  Serial.print("Numero de acoes: ");  
+  Serial.println(i); //TESTE APAGAR   
   encoderCounter=0;  //  reset counter to zero
   Encoder1Timer = millis();
 }
@@ -136,7 +139,6 @@ void setup() {
 //===========================================================================
 //Loop
 //===========================================================================
-
 void loop() { 
 
   /*
@@ -179,7 +181,7 @@ void loop() {
   //}
 
   //Girar 45 graus
-  
+  i++; // TESTE APAGAR
   
 }
 
