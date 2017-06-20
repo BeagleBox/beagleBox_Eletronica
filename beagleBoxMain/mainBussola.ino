@@ -57,8 +57,8 @@ void setupBussola() {
     // supply your own gyro offsets here, scaled for min sensitivity
     mpu.setXGyroOffset(220);
     mpu.setYGyroOffset(76);
-    mpu.setZGyroOffset(-85);
-    mpu.setZAccelOffset(1788); // 1688 factory default for my test chip
+    mpu.setZGyroOffset(18);
+    mpu.setZAccelOffset(1688); // 1688 factory default for my test chip
 
     // make sure it worked (returns 0 if so)
     if (devStatus == 0) {
@@ -136,6 +136,7 @@ int leituraOrientacao() {
             ///Serial.print(" ");
             ///Serial.println(ypr[0] * 180/M_PI);
             bussola = (ypr[0] * 180/M_PI);
+            //if (x < 0){bussola = 360 + x} // Converter leitura para 0 e 360
             delay(100);
         #endif
 

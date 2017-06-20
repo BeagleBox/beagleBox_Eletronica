@@ -59,6 +59,33 @@ void controle(char estado){
   }
 }
 
+void girar(char direcao, char rumo){
+  switch(direcao){
+    case 'D':
+      do{
+      rosaDosVentos();
+      movimento(velocidadeMotor,0,0,velocidadeMotor);
+      }while(orientacao != rumo) 
+    break;
+
+    case 'E':
+      do{
+      rosaDosVentos();
+      movimento(0,velocidadeMotor,0,velocidadeMotor);
+      }while(orientacao != rumo) 
+    break;
+    
+    case 'T':
+      do{
+      rosaDosVentos();
+      movimento(velocidadeMotor,0,0,velocidadeMotor);
+      }while(orientacao != rumo) 
+    break;
+    
+  }
+}
+
+
 void setupPWMControl(){
   
   pinMode(motorDianteiroDireita, OUTPUT);

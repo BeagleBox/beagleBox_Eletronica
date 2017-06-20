@@ -52,7 +52,7 @@
 //===========================================================================
 
 #define LED_PIN 13
-#define intervaloCalibracao 15000
+#define intervaloCalibracao 16000
 #define intervaloEntreUltrassons 50
 
 //===========================================================================
@@ -68,6 +68,8 @@ float ultrassomCentro = 0;
 float ultrassomEsquerda = 0;
 float encoderEsquerda = 0;
 float encoderDireita = 0;
+float teste = 0;
+char orientacao = 'I';
 
 //INTERVALOS DE LEITURA DOS SINAIS
 const unsigned long orientacaoIntervalo = 10;
@@ -105,26 +107,32 @@ unsigned long serialTimer;
 */
 
 //===========================================================================
+//Rotina de Leitura dos Sensores
+//===========================================================================
+
+void leituraSensores(){  
+  if ((millis() - orientacaoTimer) >= orientacaoIntervalo) {
+    leituraOrientacao();
+  }//fim da leitura
+  if ((millis() - ultrassomTimer) >= ultrassomIntervalo) {
+    leituraUltrassomDireita();
+  }//fim da leitura
+  if ((millis() - (ultrassomTimer + intervaloEntreUltrassons)) >= ultrassomIntervalo) {
+    leituraUltrassomCentro();
+  }//fim da leitura
+  if ((millis() - (ultrassomTimer + 2*intervaloEntreUltrassons)) >= ultrassomIntervalo) {
+    leituraUltrassomEsquerda();
+  }//fim da leitura
+  if ((millis() - encoderTimer) >= encoderIntervalo) {
+    leituraEncoder();
+  }//fim da leitura
+}
+
+//===========================================================================
 //Serial Debug
 //===========================================================================
 
-void serialDebug() {
-  Serial.print("Bussola: ");
-  Serial.println(bussola);
-  Serial.print("Ultrassom Direita: ");
-  Serial.println(ultrassomDireita);
-  Serial.print("Ultrassom Centro: ");
-  Serial.println(ultrassomCentro);
-  Serial.print("Ultrassom Esquerda: ");
-  Serial.println(ultrassomEsquerda);
-  Serial.print("Encoder Esquerda: ");
-  Serial.println(encoderEsquerda);
-
-  serialTimer = millis();
-}
-
-void serialTEXT() {
-  
+void serialDebug() {  
   Serial.print(bussola);
   Serial.print("\t");
   Serial.print(ultrassomDireita);
@@ -133,8 +141,10 @@ void serialTEXT() {
   Serial.print("\t");
   Serial.print(ultrassomEsquerda);
   Serial.print("\t");
-  Serial.println(encoderEsquerda);
-
+  Serial.print(encoderEsquerda);
+  Serial.print("\t");
+  rosaDosVentos();
+  Serial.println(orientacao);
   serialTimer = millis();
 }
 
@@ -150,23 +160,21 @@ void setup() {
   Serial.println("  ");
   Serial.println("Inicializando Sensores...");
   setupBussola();
-  Serial.println("Bussola Inicializado.");
+  Serial.println("\tBussola Inicializado.");
   setupEncoder();
-  Serial.println("Encoder Inicializado.");
+  Serial.println("\tEncoder Inicializado.");
   setupPWMControl();
-  Serial.println("PWMControl Inicializado.");
+  Serial.println("\tPWMControl Inicializado.");
   setupUltrassom();
-  Serial.println("Ultrassom Inicializado.");
-
-  
+  Serial.println("\tUltrassom Inicializado.");
 
   //LED de indicação de atividade
   pinMode(LED_PIN, OUTPUT);
 
   //intervalo de calibração dos sensores
-  Serial.println("Calibrando sensores...");
+  Serial.println("Calibrando Sensores...");
   while (millis() < intervaloCalibracao) {};
-  Serial.println("PRONTO!");
+  Serial.println("\tPRONTO!");
   leituraOrientacao();
   delay(500);
   leituraOrientacao();
@@ -176,6 +184,7 @@ void setup() {
   ultrassomTimer = millis();
   serialTimer = millis();
   encoderTimer = millis();
+
 }
 
 //===========================================================================
@@ -184,27 +193,12 @@ void setup() {
 
 void loop() {
 
-  if ((millis() - orientacaoTimer) >= orientacaoIntervalo) {
-    leituraOrientacao();
-  }//fim da leitura
-  if ((millis() - ultrassomTimer) >= ultrassomIntervalo) {
-    leituraUltrassomDireita();
-  }//fim da leitura
-  if ((millis() - (ultrassomTimer + intervaloEntreUltrassons)) >= ultrassomIntervalo) {
-    leituraUltrassomCentro();
-  }//fim da leitura
-  if ((millis() - (ultrassomTimer + 2 * intervaloEntreUltrassons)) >= ultrassomIntervalo) {
-    leituraUltrassomEsquerda();
-  }//fim da leitura
-  if ((millis() - encoderTimer) >= encoderIntervalo) {
-    leituraEncoder();
-  }//fim da leitura
+  leituraSensores();
 
-  /*if ((millis() - serialTimer) >= serialIntervalo) {
-    serialDebug();
-  }//fim da leitura*/
+  serialDebug();
 
-  serialTEXT();
+  //wavefront();
+
 
   //LED para indicar atividade
   blinkState = !blinkState;
