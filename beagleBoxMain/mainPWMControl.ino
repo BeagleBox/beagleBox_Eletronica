@@ -4,6 +4,7 @@
 //===========================================================================
 
 #define passoDeVelocidade 10
+#define comprimentoQuadrado 20
 
 //===========================================================================
 //Variaveis 
@@ -15,6 +16,7 @@ int motorDianteiroDireita = 9;
 int motorTraseiroDireita = 10; 
 // Velocidade dos motores, pusol PWM: (0-255)
 int velocidadeMotor = 0; 
+float distancia = 0;
 
 //===========================================================================
 //Funções
@@ -60,7 +62,10 @@ void controle(char estado){
 }
 
 void moverParaFrente(){
+  distancia = encoderDireita;
+  while(encoderDireita - distancia < comprimentoQuadrado){
   movimento(velocidadeMotor,velocidadeMotor,0,0);
+  }
 }
 
 void girar(char direcao, char rumo){
@@ -69,21 +74,21 @@ void girar(char direcao, char rumo){
       do{
       rosaDosVentos();
       movimento(velocidadeMotor,0,0,velocidadeMotor);
-      }while(orientacao != rumo) 
+      }while(orientacao != rumo); 
     break;
 
     case 'E':
       do{
       rosaDosVentos();
       movimento(0,velocidadeMotor,0,velocidadeMotor);
-      }while(orientacao != rumo) 
+      }while(orientacao != rumo); 
     break;
     
     case 'T':
       do{
       rosaDosVentos();
       movimento(velocidadeMotor,0,0,velocidadeMotor);
-      }while(orientacao != rumo) 
+      }while(orientacao != rumo); 
     break;
     
   }

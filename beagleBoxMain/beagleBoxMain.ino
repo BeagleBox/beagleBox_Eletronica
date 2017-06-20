@@ -195,9 +195,9 @@ void loop() {
 
   leituraSensores();
 
-  serialDebug();
+  //serialDebug();
 
-  //wavefront();
+  wavefront();
 
 
   //LED para indicar atividade

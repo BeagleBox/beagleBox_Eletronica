@@ -8,6 +8,9 @@
 //===========================================================================
 //Variaveis 
 //===========================================================================
+int numeroDaRota;
+int roboI;
+int roboJ;
 
 int mapa[linhas][colunas] = {{0,0,0,0,0,0,0},
                              {0,5,4,3,2,1,0},
@@ -49,7 +52,7 @@ void posicaoRobo(){
 }
 
 void wavefront(){
-  switch (orroboIentacao) {
+  switch (orientacao) {
     case 'N':
       if(mapa[roboI-1][roboJ] == numeroDaRota ){
         moverParaFrente();
