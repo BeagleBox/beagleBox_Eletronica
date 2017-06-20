@@ -59,6 +59,10 @@ void controle(char estado){
   }
 }
 
+void moverParaFrente(){
+  movimento(velocidadeMotor,velocidadeMotor,0,0);
+}
+
 void girar(char direcao, char rumo){
   switch(direcao){
     case 'D':
@@ -84,7 +88,6 @@ void girar(char direcao, char rumo){
     
   }
 }
-
 
 void setupPWMControl(){
   
