@@ -7,8 +7,8 @@
 #define SONAR_DIREITA 0      // Numero do sensor no array
 #define SONAR_CENTRO 1       // Numero do sensor no array
 #define SONAR_ESQUERDA 2     // Numero do sensor no array
-#define NUMERO_MEDICOES 5    
-#define MAX_DISTANCE 400 // Maxima distancia (em cm).
+#define NUMERO_MEDICOES 1    
+#define MAX_DISTANCE 300 // Maxima distancia (em cm).
 #define uS1 7 // pino que recebe o ping(trig/echo) ultrassom direita
 #define uS2 12 // pino que recebe o ping(trig/echo) ultrassom centro
 #define uS3 4 // pino que recebe o ping(trig/echo) ultrassom esquerda

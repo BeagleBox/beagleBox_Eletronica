@@ -62,7 +62,7 @@
 //inidicação de atividade
 bool blinkState = false;
 
-int bussola = 0;
+float bussola = 0;
 float ultrassomDireita = 0;
 float ultrassomCentro = 0;
 float ultrassomEsquerda = 0;
@@ -71,7 +71,7 @@ float encoderDireita = 0;
 
 //INTERVALOS DE LEITURA DOS SINAIS
 const unsigned long orientacaoIntervalo = 10;
-const unsigned long ultrassomIntervalo = 200;
+const unsigned long ultrassomIntervalo = 150;
 const unsigned long encoderIntervalo = 10;
 const unsigned long serialIntervalo = 1000;
 
@@ -123,6 +123,21 @@ void serialDebug() {
   serialTimer = millis();
 }
 
+void serialTEXT() {
+  
+  Serial.print(bussola);
+  Serial.print("\t");
+  Serial.print(ultrassomDireita);
+  Serial.print("\t");
+  Serial.print(ultrassomCentro);
+  Serial.print("\t");
+  Serial.print(ultrassomEsquerda);
+  Serial.print("\t");
+  Serial.println(encoderEsquerda);
+
+  serialTimer = millis();
+}
+
 //===========================================================================
 //Setup
 //===========================================================================
@@ -132,6 +147,7 @@ void setup() {
   //SERIAL
   Serial.begin(115200); // Comunicação com a Rasp
   //INICIALIZAÇÃO DOS SENSORES
+  Serial.println("  ");
   Serial.println("Inicializando Sensores...");
   setupBussola();
   Serial.println("Bussola Inicializado.");
@@ -142,11 +158,7 @@ void setup() {
   setupUltrassom();
   Serial.println("Ultrassom Inicializado.");
 
-  //tempo que foi chamado
-  orientacaoTimer = millis();
-  ultrassomTimer = millis();
-  serialTimer = millis();
-  encoderTimer = millis();
+  
 
   //LED de indicação de atividade
   pinMode(LED_PIN, OUTPUT);
@@ -158,6 +170,12 @@ void setup() {
   leituraOrientacao();
   delay(500);
   leituraOrientacao();
+
+  //tempo que foi chamado
+  orientacaoTimer = millis();
+  ultrassomTimer = millis();
+  serialTimer = millis();
+  encoderTimer = millis();
 }
 
 //===========================================================================
@@ -175,18 +193,18 @@ void loop() {
   if ((millis() - (ultrassomTimer + intervaloEntreUltrassons)) >= ultrassomIntervalo) {
     leituraUltrassomCentro();
   }//fim da leitura
-  if ((millis() - (ultrassomTimer + 2*intervaloEntreUltrassons)) >= ultrassomIntervalo) {
+  if ((millis() - (ultrassomTimer + 2 * intervaloEntreUltrassons)) >= ultrassomIntervalo) {
     leituraUltrassomEsquerda();
   }//fim da leitura
   if ((millis() - encoderTimer) >= encoderIntervalo) {
     leituraEncoder();
   }//fim da leitura
 
-  if ((millis() - serialTimer) >= serialIntervalo) {
+  /*if ((millis() - serialTimer) >= serialIntervalo) {
     serialDebug();
-  }//fim da leitura
+  }//fim da leitura*/
 
-  //serialDebug();
+  serialTEXT();
 
   //LED para indicar atividade
   blinkState = !blinkState;
