@@ -1,12 +1,36 @@
 /*
-Codigo controle BeagleBox 
+  Controle BeagleBox
 
-Funcionalidades:
+  Funcionalidades:
   #Ultrassom
   #Encoder
   #PWM
-  #Acelerometro/Giroscopio
+  #Acelerometro/Giroscopio (Bussola)
 
+  Pinagem Arduino:
+  A0 ----> Analogico Encoder Esquerda
+  A1 ----> Analogico Encoder Direita
+  A2 ---->
+  A3 ---->
+  A4 ----> SCA MPU6050
+  A5 ----> SCL MPU6050
+  A6 ---->
+  A7 ---->
+
+  D00 ---> TX
+  D01 ---> RX
+  D02 ---> Interrupção do MPU6050
+  D03 ---> Interrupção do EncoderEsquerda
+  D04 ---> Ultrassom Esquerda
+  D05 ---> Motor Dianteiro Esquerda
+  D06 ---> Motor Traseiro Esquerda
+  D07 ---> Ultrassom Direita
+  D08 --->
+  D09 ---> Motor Dianteiro Direita
+  D10 ---> Motor Traseiro Direita
+  D11 ---> Encoder Direita
+  D12 ---> Ultrassom Centro
+  D13 --->
 
 */
 //===========================================================================
@@ -17,21 +41,22 @@ Funcionalidades:
 #include "I2Cdev.h"
 #include "MPU6050_6Axis_MotionApps20.h"
 #if I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
-  #include "Wire.h"
+#include "Wire.h"
 #endif
 
 //ULTRASSOM
 #include <NewPing.h>
 
 //===========================================================================
-//Definições
+//Constantes
 //===========================================================================
 
-#define LED_PIN 13 
+#define LED_PIN 13
 #define intervaloCalibracao 15000
+#define intervaloEntreUltrassons 50
 
 //===========================================================================
-//Variaveis 
+//Variaveis
 //===========================================================================
 
 //inidicação de atividade
@@ -45,44 +70,64 @@ float encoderEsquerda = 0;
 float encoderDireita = 0;
 
 //INTERVALOS DE LEITURA DOS SINAIS
-const unsigned long orientacaoIntervalo = 100;
-const unsigned long ultrassomIntervalo = 150;
-const unsigned long encoderIntervalo = 1;
-
+const unsigned long orientacaoIntervalo = 10;
+const unsigned long ultrassomIntervalo = 200;
+const unsigned long encoderIntervalo = 10;
+const unsigned long serialIntervalo = 1000;
 
 
 //TIMERS PARA REPETIR A LEITURA DO SINAL
 unsigned long orientacaoTimer;
 unsigned long ultrassomTimer;
 unsigned long encoderTimer;
+unsigned long serialTimer;
 
 //===========================================================================
 //Funções
 //===========================================================================
 
 /*Algoritmo
-wavefront                 ALGORITMO DE RESOLUÇÃO DO MAPA
+  wavefront                 ALGORITMO DE RESOLUÇÃO DO MAPA
 */
 /*Bussola
-orientacao                LOOP DA BUSSOLA QUE INFORMA A ORIENTACAO DO ROBO
+  orientacao                LOOP DA BUSSOLA QUE INFORMA A ORIENTACAO DO ROBO
 */
 /*Encoder
-distanciaPercorrida       DISTANCIA QUE O ROBO ANDOU EM (cm)
+  distanciaPercorrida       DISTANCIA QUE O ROBO ANDOU EM (cm)
 */
 /*PWM
-movimento                 CONTROLE DE ACIONAMENTO DOS MOTORES
-velocidade                CONTROLE DE VELOCIDADE
-controle                  AÇÃO DO ROBO
+  movimento                 CONTROLE DE ACIONAMENTO DOS MOTORES
+  velocidade                CONTROLE DE VELOCIDADE
+  controle                  AÇÃO DO ROBO
 */
 /*Ultrassom
-leituraUltrassom
+  leituraUltrassom
 */
+
+//===========================================================================
+//Serial Debug
+//===========================================================================
+
+void serialDebug() {
+  Serial.print("Bussola: ");
+  Serial.println(bussola);
+  Serial.print("Ultrassom Direita: ");
+  Serial.println(ultrassomDireita);
+  Serial.print("Ultrassom Centro: ");
+  Serial.println(ultrassomCentro);
+  Serial.print("Ultrassom Esquerda: ");
+  Serial.println(ultrassomEsquerda);
+  Serial.print("Encoder Esquerda: ");
+  Serial.println(encoderEsquerda);
+
+  serialTimer = millis();
+}
 
 //===========================================================================
 //Setup
 //===========================================================================
 
-void setup() { 
+void setup() {
 
   //SERIAL
   Serial.begin(115200); // Comunicação com a Rasp
@@ -100,56 +145,48 @@ void setup() {
   //tempo que foi chamado
   orientacaoTimer = millis();
   ultrassomTimer = millis();
-  // ultrassomCentroTimer = millis();
-  // ultrassomEsquerdaTimer = millis();
+  serialTimer = millis();
   encoderTimer = millis();
 
   //LED de indicação de atividade
   pinMode(LED_PIN, OUTPUT);
-  
+
   //intervalo de calibração dos sensores
   Serial.println("Calibrando sensores...");
-  while(millis() < intervaloCalibracao){};
+  while (millis() < intervaloCalibracao) {};
   Serial.println("PRONTO!");
+  leituraOrientacao();
   delay(500);
-} 
+  leituraOrientacao();
+}
 
 //===========================================================================
 //Loop
 //===========================================================================
 
-void loop() { 
-  
-  /*if ((millis() - orientacaoTimer) >= orientacaoIntervalo) {
+void loop() {
+
+  if ((millis() - orientacaoTimer) >= orientacaoIntervalo) {
     leituraOrientacao();
-  }//fim da leitura*/
+  }//fim da leitura
   if ((millis() - ultrassomTimer) >= ultrassomIntervalo) {
     leituraUltrassomDireita();
   }//fim da leitura
-   if ((millis() - ultrassomTimer + 40) >= ultrassomIntervalo) {
+  if ((millis() - (ultrassomTimer + intervaloEntreUltrassons)) >= ultrassomIntervalo) {
     leituraUltrassomCentro();
   }//fim da leitura
-   if ((millis() - ultrassomTimer + 80) >= ultrassomIntervalo) {
+  if ((millis() - (ultrassomTimer + 2*intervaloEntreUltrassons)) >= ultrassomIntervalo) {
     leituraUltrassomEsquerda();
   }//fim da leitura
   if ((millis() - encoderTimer) >= encoderIntervalo) {
     leituraEncoder();
   }//fim da leitura
-  
 
-  //if(millis() > intervaloCalibracao){
-    /*Serial.print("Bussola: ");
-    Serial.println(bussola);*/
-    Serial.print("Ultrassom Direita: ");
-    Serial.println(ultrassomDireita);
-    Serial.print("Ultrassom Centro: ");
-    Serial.println(ultrassomCentro);
-    Serial.print("Ultrassom Esquerda: ");
-    Serial.println(ultrassomEsquerda);
-    Serial.print("Encoder Esquerda: ");
-    Serial.println(encoderEsquerda);
-  //}
-  //else{}
+  if ((millis() - serialTimer) >= serialIntervalo) {
+    serialDebug();
+  }//fim da leitura
+
+  //serialDebug();
 
   //LED para indicar atividade
   blinkState = !blinkState;
