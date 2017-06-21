@@ -142,10 +142,14 @@ void serialDebug() {
   Serial.print(ultrassomEsquerda);
   Serial.print("\t");
   Serial.print(encoderEsquerda);
+
   Serial.print("\t");
-  rosaDosVentos();
+  Serial.print(encoderEsquerda);
+  Serial.print("\t");
+  //rosaDosVentos();
   Serial.println(orientacao);
   serialTimer = millis();
+
 }
 
 //===========================================================================
@@ -159,6 +163,8 @@ void setup() {
   //INICIALIZAÇÃO DOS SENSORES
   Serial.println("  ");
   Serial.println("Inicializando Sensores...");
+  setupAlgoritmo();
+  Serial.println("\tAlgoritmo Inicializado.");
   setupBussola();
   Serial.println("\tBussola Inicializado.");
   setupEncoder();
@@ -195,7 +201,7 @@ void loop() {
 
   leituraSensores();
 
-  //serialDebug();
+  serialDebug();
 
   wavefront();
 

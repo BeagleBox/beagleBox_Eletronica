@@ -137,7 +137,6 @@ int leituraOrientacao() {
             ///Serial.println(ypr[0] * 180/M_PI);
             bussola = (ypr[0] * 180/M_PI);
             //if (x < 0){bussola = 360 + x} // Converter leitura para 0 e 360
-            delay(100);
         #endif
 
             //Adicionando por causa do Timer
