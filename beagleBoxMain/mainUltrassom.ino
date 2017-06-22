@@ -29,18 +29,20 @@ NewPing sonar[SONAR_NUM] = {   // Sensor object array.
 void setupUltrassom(){}
 
 void leituraUltrassomDireita() {  
-  ultrassomDireita = sonar[SONAR_DIREITA].convert_cm(sonar[SONAR_DIREITA].ping_median(NUMERO_MEDICOES)); // Calcula a media entre 10 pulsos e converte o resultado para cm  
+  // Calcula a media entre 10 pulsos e converte o resultado para cm  
+  ultrassomDireita = sonar[SONAR_DIREITA].convert_cm(sonar[SONAR_DIREITA].ping_median(NUMERO_MEDICOES)); 
+  // Atualiza o timer da leitura do ultrassom
   ultrassomTimer= millis();
 }
 
 void leituraUltrassomCentro() {    
-  ultrassomCentro = sonar[SONAR_CENTRO].convert_cm(sonar[SONAR_CENTRO].ping_median(NUMERO_MEDICOES)); // Calcula a media entre 10 pulsos e converte o resultado para cm
-  //ultrassomTimer= millis();
+  // Calcula a media entre 10 pulsos e converte o resultado para cm
+  ultrassomCentro = sonar[SONAR_CENTRO].convert_cm(sonar[SONAR_CENTRO].ping_median(NUMERO_MEDICOES)); 
 }
     
 void leituraUltrassomEsquerda() { 
-  ultrassomEsquerda = sonar[SONAR_ESQUERDA].convert_cm(sonar[SONAR_ESQUERDA].ping_median(NUMERO_MEDICOES)); // Calcula a media entre 10 pulsos e converte o resultado para cm
-  //ultrassomTimer= millis();
+  // Calcula a media entre 10 pulsos e converte o resultado para cm
+  ultrassomEsquerda = sonar[SONAR_ESQUERDA].convert_cm(sonar[SONAR_ESQUERDA].ping_median(NUMERO_MEDICOES)); 
 }
 
  

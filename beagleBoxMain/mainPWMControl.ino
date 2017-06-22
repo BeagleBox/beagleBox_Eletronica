@@ -4,7 +4,6 @@
 //===========================================================================
 
 #define passoDeVelocidade 10
-#define comprimentoQuadrado 20
 
 //===========================================================================
 //Variaveis
@@ -16,8 +15,6 @@ int motorDianteiroDireita = 9;
 int motorTraseiroDireita = 10;
 // Velocidade dos motores, pusol PWM: (0-255)
 int velocidadeMotor = 100;
-float distancia = 0;
-bool flag = true;
 
 //===========================================================================
 //Funções
@@ -59,53 +56,6 @@ void controle(char estado) {
   }
   if (estado == 'e') { // Diminui a velocidade dos motores
     velocidade(-passoDeVelocidade);
-  }
-}
-
-void moverParaFrente() {
-  if (flag) {
-    controle('w');
-    distancia = encoderEsquerda;
-    flag = false;
-  }
-  Serial.print("In: moverParaFrente. \t");
-  if (encoderEsquerda - distancia >= comprimentoQuadrado){
-    controle('s');
-    numeroDaRota--;
-    flag = true;
-    Serial.print("In: Condição de pausa moverParaFrente  \t");
-    switch (orientacao) {
-      case 'N':
-      roboI = roboI - 1;
-      break;
-      case 'S':
-      roboI = roboI + 1;
-      break;
-      case 'L':
-      roboJ = roboJ + 1;
-      break;
-      case 'O':
-      roboJ = roboJ - 1;
-      break;
-    }
-  }
-}
-
-void girar(char direcao) {
-  switch (direcao) {
-    case 'D':
-      controle('d');
-      Serial.print("In: girar D. \t");
-    break;
-    case 'E':
-      controle('a');
-      Serial.print("In: girar E. \t");
-    break;
-    case 'T':
-      controle('d');
-      Serial.print("In: girar T. \t");
-    break;
-    default: controle('s');
   }
 }
 

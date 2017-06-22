@@ -91,6 +91,9 @@ unsigned long encoderTimer;
 
 /*Algoritmo
   wavefront                 ALGORITMO DE RESOLUÇÃO DO MAPA
+  rosaDosVentos             TRASFORMA O DADO DA BUSSOLA PARA DIRECOES N,S,L,O
+  calculoNumeroDaRota       CALCULA O 
+  posicaoRobo
 */
 /*Bussola
   orientacao                LOOP DA BUSSOLA QUE INFORMA A ORIENTACAO DO ROBO
@@ -108,10 +111,19 @@ unsigned long encoderTimer;
 */
 
 //===========================================================================
+//LED mosta que o loop está acontecendo
+//===========================================================================
+
+void atividade(){
+  blinkState = !blinkState;
+  digitalWrite(LED_PIN, blinkState);
+}
+
+//===========================================================================
 //Rotina de Leitura dos Sensores
 //===========================================================================
 
-void leituraSensores(){  
+void lerSensores(){  
   if ((millis() - orientacaoTimer) >= orientacaoIntervalo) {
     leituraOrientacao();
   }//fim da leitura
@@ -176,9 +188,7 @@ void setup() {
   Serial.println("Calibrando Sensores...");
   while (millis() < intervaloCalibracao) {};
   Serial.println("\tPRONTO!");
-  leituraOrientacao();
   delay(500);
-  leituraOrientacao();
 
   //tempo que foi chamado
   orientacaoTimer = millis();
@@ -193,13 +203,15 @@ void setup() {
 
 void loop() {
 
-  leituraSensores();
+  //atualiza o valor dos sensores.
+  lerSensores();
 
-  wavefront();
+  //Algoritmo que realiza os movimentos do robo
+  rodarWavefront();
 
+  //Rotina para acompanhar os valores dos sensores e posição da execução
   serialDebug();
 
   //LED para indicar atividade
-  blinkState = !blinkState;
-  digitalWrite(LED_PIN, blinkState);
+  atividade();
 }
