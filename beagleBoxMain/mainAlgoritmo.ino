@@ -63,71 +63,51 @@ void posicaoRobo() {
 void wavefront() {
   if (numeroDaRota == 1) controle('s');
   else {
+    rosaDosVentos();
     switch (orientacao) {
       case 'N':
         if (mapa[roboI - 1][roboJ] == numeroDaRota ) {
           moverParaFrente();
-          Serial.println("moverParaFrente orientacao");
           roboI = roboI - 1;
         }
         else if (mapa[roboI][roboJ + 1] == numeroDaRota) {
-          girar('D', 'L');
-          moverParaFrente();
-          roboJ = roboJ + 1;
+          girar('D');
         }
         else if (mapa[roboI][roboJ - 1] == numeroDaRota) {
-          girar('E', 'O');
-          moverParaFrente();
-          roboJ = roboJ - 1;
+          girar('E');
         }
         else if (mapa[roboI + 1][roboJ] == numeroDaRota) {
-          girar('T', 'S');
-          moverParaFrente();
-          roboI = roboI + 1;
+          girar('T');
         }
         break;
-        
       case 'S':
         if (mapa[roboI + 1][roboJ] == numeroDaRota ) {
           moverParaFrente();
           roboI = roboI + 1;
         }
         else if (mapa[roboI][roboJ - 1] == numeroDaRota) {
-          girar('D', 'O');
-          moverParaFrente();
-          roboJ = roboJ - 1;
+          girar('D');
         }
         else if (mapa[roboI][roboJ + 1] == numeroDaRota) {
-          girar('E', 'L');
-          moverParaFrente();
-          roboJ = roboJ + 1;
+          girar('E');
         }
         else if (mapa[roboI + 1][roboJ] == numeroDaRota) {
-          girar('T', 'N');
-          moverParaFrente();
-          roboI = roboI + 1;
+          girar('T');
         }
         break;
 
       case 'L':
         if (mapa[roboI][roboJ + 1] == numeroDaRota ) {
           moverParaFrente();
-          roboJ = roboJ + 1;
         }
         else if (mapa[roboI + 1][roboJ] == numeroDaRota) {
-          girar('D', 'S');
-          moverParaFrente();
-          roboI = roboI + 1;
+          girar('D');
         }
         else if (mapa[roboI - 1][roboJ] == numeroDaRota) {
-          girar('E', 'N');
-          moverParaFrente();
-          roboI = roboI - 1;
+          girar('E');
         }
         else if (mapa[roboI][roboJ - 1] == numeroDaRota) {
-          girar('T', 'S');
-          moverParaFrente();
-          roboJ = roboJ - 1;
+          girar('T');
         }
         break;
 
@@ -137,25 +117,18 @@ void wavefront() {
           roboJ = roboJ - 1;
         }
         else if (mapa[roboI - 1][roboJ] == numeroDaRota) {
-          girar('D', 'N');
-          moverParaFrente();
-          roboI = roboI - 1;
+          girar('D');
         }
         else if (mapa[roboI + 1][roboJ] == numeroDaRota) {
-          girar('E', 'S');
-          moverParaFrente();
-          roboI = roboI + 1;
+          girar('E');
         }
         else if (mapa[roboI][roboJ + 1] == numeroDaRota) {
-          girar('T', 'L');
-          moverParaFrente();
-          roboJ = roboJ + 1;
+          girar('T');
         }
         break;
 
       default: rosaDosVentos();
     }
-    numeroDaRota--;
   }
 }
 

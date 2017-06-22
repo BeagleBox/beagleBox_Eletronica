@@ -17,6 +17,7 @@ int motorTraseiroDireita = 10;
 // Velocidade dos motores, pusol PWM: (0-255)
 int velocidadeMotor = 100;
 float distancia = 0;
+bool flag = true;
 
 //===========================================================================
 //Funções
@@ -62,43 +63,30 @@ void controle(char estado) {
 }
 
 void moverParaFrente() {
-  distancia = encoderEsquerda;
-  while (encoderEsquerda - distancia < comprimentoQuadrado) {
-    movimento(velocidadeMotor, velocidadeMotor, 0, 0);
-    leituraEncoder();
-    Serial.println (encoderEsquerda);
+  if (flag) {
+    controle('w');
+    distancia = encoderEsquerda;
+    flag = false;
+  }
+  if (encoderEsquerda - distancia == comprimentoQuadrado){
+    controle('s');
+    numeroDaRota--;
+    flag = true;
   }
 }
 
-void girar(char direcao, char rumo) {
+void girar(char direcao) {
   switch (direcao) {
     case 'D':
-      do {
-        rosaDosVentos();
-        movimento(velocidadeMotor, 0, 0, velocidadeMotor);
-        leituraOrientacao();
-        Serial.println(orientacao);
-      } while (orientacao != rumo);
-      break;
-
+      controle('d');
+    break;
     case 'E':
-      do {
-        rosaDosVentos();
-        movimento(0, velocidadeMotor, 0, velocidadeMotor);
-        leituraOrientacao();
-         Serial.println(orientacao);
-      } while (orientacao != rumo);
-      break;
-
+      controle('a');
+    break;
     case 'T':
-      do {
-        rosaDosVentos();
-        movimento(velocidadeMotor, 0, 0, velocidadeMotor);
-        leituraOrientacao();
-         Serial.println(orientacao);
-      } while (orientacao != rumo);
-      break;
-
+      controle('d');
+    break;
+    default: controle('s');
   }
 }
 

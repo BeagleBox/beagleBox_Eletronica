@@ -46,11 +46,6 @@ void setupBussola() {
         Fastwire::setup(400, true);
     #endif
 
-    // initialize serial communication
-    // (115200 chosen because it is required for Teapot Demo output, but it's
-    // really up to you depending on your project)
-    // Inivializado na Main --> Serial.begin(115200);
-    //while (!Serial); // wait for Leonardo enumeration, others continue immediately
     mpu.initialize();
     devStatus = mpu.dmpInitialize();
 
@@ -127,14 +122,6 @@ int leituraOrientacao() {
             mpu.dmpGetQuaternion(&q, fifoBuffer);
             mpu.dmpGetGravity(&gravity, &q);
             mpu.dmpGetYawPitchRoll(ypr, &q, &gravity);
-            //Serial.print("Phi: ");
-            ///Serial.print(ypr[2] * 18/M_PI);
-            //Serial.print("\t theta: ");
-            ///Serial.print(" ");
-            ///Serial.print(ypr[1] * 180/M_PI);
-            //Serial.print("\t Psi: ");
-            ///Serial.print(" ");
-            ///Serial.println(ypr[0] * 180/M_PI);
             bussola = (ypr[0] * 180/M_PI);
             //if (x < 0){bussola = 360 + x} // Converter leitura para 0 e 360
         #endif

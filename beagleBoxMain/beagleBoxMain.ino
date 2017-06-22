@@ -142,11 +142,7 @@ void serialDebug() {
   Serial.print(ultrassomEsquerda);
   Serial.print("\t");
   Serial.print(encoderEsquerda);
-
   Serial.print("\t");
-  Serial.print(encoderEsquerda);
-  Serial.print("\t");
-  //rosaDosVentos();
   Serial.println(orientacao);
   serialTimer = millis();
 
@@ -201,10 +197,9 @@ void loop() {
 
   leituraSensores();
 
-  serialDebug();
-
   wavefront();
 
+  serialDebug();
 
   //LED para indicar atividade
   blinkState = !blinkState;
