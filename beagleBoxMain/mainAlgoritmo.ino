@@ -9,13 +9,11 @@
 //Variaveis
 //===========================================================================
 int numeroDaRota;
-int roboI;
-int roboJ;
 
 int mapa[linhas][colunas] = {{0, 0, 0, 0, 0, 0, 0},
   {0, 5, 4, 3, 2, 1, 0},
   {0, 6, 5, 4, 3, 2, 0},
-  {0, 7, 6, 5, 4, 3, 0},
+  {0, 0, 6, 5, 4, 3, 0},
   {0, 8, 7, 0, 0, 0, 0},
   {0, 9, 8, 0, 0, 0, 0},
   {0, 255, 9, 0, 0, 0, 0},
@@ -61,16 +59,21 @@ void posicaoRobo() {
 }
 
 void wavefront() {
-  if (numeroDaRota == 1) controle('s');
+  if (numeroDaRota < 1){ 
+    controle('s');
+    Serial.print("Cheguei ao destino.");
+    while(1);
+  }
   else {
     rosaDosVentos();
     switch (orientacao) {
       case 'N':
         if (mapa[roboI - 1][roboJ] == numeroDaRota ) {
+          Serial.print("In: wavefront N frente  \t");
           moverParaFrente();
-          roboI = roboI - 1;
         }
         else if (mapa[roboI][roboJ + 1] == numeroDaRota) {
+          Serial.print("In: wavefront N girar D  \t");
           girar('D');
         }
         else if (mapa[roboI][roboJ - 1] == numeroDaRota) {
@@ -83,7 +86,6 @@ void wavefront() {
       case 'S':
         if (mapa[roboI + 1][roboJ] == numeroDaRota ) {
           moverParaFrente();
-          roboI = roboI + 1;
         }
         else if (mapa[roboI][roboJ - 1] == numeroDaRota) {
           girar('D');
@@ -98,6 +100,7 @@ void wavefront() {
 
       case 'L':
         if (mapa[roboI][roboJ + 1] == numeroDaRota ) {
+          Serial.print("In: wavefront L frente  \t");
           moverParaFrente();
         }
         else if (mapa[roboI + 1][roboJ] == numeroDaRota) {
@@ -114,7 +117,6 @@ void wavefront() {
       case 'O':
         if (mapa[roboI][roboJ - 1] == numeroDaRota ) {
           moverParaFrente();
-          roboJ = roboJ - 1;
         }
         else if (mapa[roboI - 1][roboJ] == numeroDaRota) {
           girar('D');

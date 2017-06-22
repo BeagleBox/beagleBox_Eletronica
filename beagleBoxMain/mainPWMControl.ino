@@ -68,10 +68,26 @@ void moverParaFrente() {
     distancia = encoderEsquerda;
     flag = false;
   }
-  if (encoderEsquerda - distancia == comprimentoQuadrado){
+  Serial.print("In: moverParaFrente. \t");
+  if (encoderEsquerda - distancia >= comprimentoQuadrado){
     controle('s');
     numeroDaRota--;
     flag = true;
+    Serial.print("In: Condição de pausa moverParaFrente  \t");
+    switch (orientacao) {
+      case 'N':
+      roboI = roboI - 1;
+      break;
+      case 'S':
+      roboI = roboI + 1;
+      break;
+      case 'L':
+      roboJ = roboJ + 1;
+      break;
+      case 'O':
+      roboJ = roboJ - 1;
+      break;
+    }
   }
 }
 
@@ -79,12 +95,15 @@ void girar(char direcao) {
   switch (direcao) {
     case 'D':
       controle('d');
+      Serial.print("In: girar D. \t");
     break;
     case 'E':
       controle('a');
+      Serial.print("In: girar E. \t");
     break;
     case 'T':
       controle('d');
+      Serial.print("In: girar T. \t");
     break;
     default: controle('s');
   }

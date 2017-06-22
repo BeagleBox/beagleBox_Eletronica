@@ -59,6 +59,10 @@
 //Variaveis
 //===========================================================================
 
+//Posicionamento do robo na matriz
+int roboI;
+int roboJ;
+
 //inidicação de atividade
 bool blinkState = false;
 
@@ -74,15 +78,12 @@ char orientacao = 'I';
 //INTERVALOS DE LEITURA DOS SINAIS
 const unsigned long orientacaoIntervalo = 10;
 const unsigned long ultrassomIntervalo = 150;
-const unsigned long encoderIntervalo = 10;
-const unsigned long serialIntervalo = 1000;
-
+const unsigned long encoderIntervalo = 1;
 
 //TIMERS PARA REPETIR A LEITURA DO SINAL
 unsigned long orientacaoTimer;
 unsigned long ultrassomTimer;
 unsigned long encoderTimer;
-unsigned long serialTimer;
 
 //===========================================================================
 //Funções
@@ -144,8 +145,6 @@ void serialDebug() {
   Serial.print(encoderEsquerda);
   Serial.print("\t");
   Serial.println(orientacao);
-  serialTimer = millis();
-
 }
 
 //===========================================================================
@@ -184,7 +183,6 @@ void setup() {
   //tempo que foi chamado
   orientacaoTimer = millis();
   ultrassomTimer = millis();
-  serialTimer = millis();
   encoderTimer = millis();
 
 }
