@@ -45,4 +45,5 @@ void leituraUltrassomEsquerda() {
   ultrassomEsquerda = sonar[SONAR_ESQUERDA].convert_cm(sonar[SONAR_ESQUERDA].ping_median(NUMERO_MEDICOES)); 
 }
 
+
  

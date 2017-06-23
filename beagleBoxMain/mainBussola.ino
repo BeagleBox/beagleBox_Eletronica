@@ -1,5 +1,4 @@
 
-
 MPU6050 mpu;
 #define OUTPUT_READABLE_YAWPITCHROLL
 
@@ -127,7 +126,7 @@ int leituraOrientacao() {
         #endif
 
             //Adicionando por causa do Timer
-            //orientacaoTimer = millis();
+            orientacaoTimer = millis();
     }
     
 }

@@ -92,7 +92,7 @@ unsigned long encoderTimer;
 /*Algoritmo
   wavefront                 ALGORITMO DE RESOLUÇÃO DO MAPA
   rosaDosVentos             TRASFORMA O DADO DA BUSSOLA PARA DIRECOES N,S,L,O
-  calculoNumeroDaRota       CALCULA O 
+  calculoNumeroDaRota       CALCULA O
   posicaoRobo
 */
 /*Bussola
@@ -114,7 +114,7 @@ unsigned long encoderTimer;
 //LED mosta que o loop está acontecendo
 //===========================================================================
 
-void atividade(){
+void atividade() {
   blinkState = !blinkState;
   digitalWrite(LED_PIN, blinkState);
 }
@@ -123,7 +123,7 @@ void atividade(){
 //Rotina de Leitura dos Sensores
 //===========================================================================
 
-void lerSensores(){  
+void lerSensores() {
   if ((millis() - orientacaoTimer) >= orientacaoIntervalo) {
     leituraOrientacao();
   }//fim da leitura
@@ -133,7 +133,7 @@ void lerSensores(){
   if ((millis() - (ultrassomTimer + intervaloEntreUltrassons)) >= ultrassomIntervalo) {
     leituraUltrassomCentro();
   }//fim da leitura
-  if ((millis() - (ultrassomTimer + 2*intervaloEntreUltrassons)) >= ultrassomIntervalo) {
+  if ((millis() - (ultrassomTimer + 2 * intervaloEntreUltrassons)) >= ultrassomIntervalo) {
     leituraUltrassomEsquerda();
   }//fim da leitura
   if ((millis() - encoderTimer) >= encoderIntervalo) {
@@ -145,7 +145,7 @@ void lerSensores(){
 //Serial Debug
 //===========================================================================
 
-void serialDebug() {  
+void serialDebug() {
   Serial.print(bussola);
   Serial.print("\t");
   Serial.print(ultrassomDireita);

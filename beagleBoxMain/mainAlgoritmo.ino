@@ -5,9 +5,9 @@
 
 #define linhas 8
 #define colunas 8
-#define distanciaMinima 3
-#define distanciaMaxima 50
-#define tempoDeEspera 1000
+#define distanciaMinimaUltrassom 3
+#define distanciaMaximaUltrassom 50
+#define tempoDeEspera 3000
 #define comprimentoQuadrado 20
 
 //===========================================================================
@@ -16,6 +16,8 @@
 int numeroDaRota;
 float distancia = 0;
 bool flag = true;
+bool flagObstaculo = false;
+unsigned long esperaTimer = 0;
 
 int mapa[linhas][colunas] = {
   {0, 0, 0, 0, 0, 0, 0},
@@ -32,9 +34,7 @@ int mapa[linhas][colunas] = {
 //Funções
 //===========================================================================
 
-//===========================================================================
 //Converte os valores da bussola para direções conhecidas
-//===========================================================================
 void rosaDosVentos() {
   if (bussola > -1 && bussola < 1) {
     orientacao = 'NORTE';
@@ -50,16 +50,13 @@ void rosaDosVentos() {
   }
   /*
     IDEIA PARA AJUSTAR AS EVENTUAIS MUNDANÇAS DE DIREÇÃO E CORRIGI-LAS
-  
+
     else{
     orientacao = 'IDLE';
-  }*/
+    }*/
 }
 
-//===========================================================================
 //Calcula o menor numero da redondeza do robo para que ele siga o caminho
-//===========================================================================
-
 void calculoNumeroDaRota () {
   for (int i = 0; i < linhas; i++) {
     for (int j = 0; j < colunas; j++) {
@@ -68,10 +65,7 @@ void calculoNumeroDaRota () {
   }
 }
 
-//===========================================================================
-//Funções
-//===========================================================================
-
+//Encontra a posição do Robo no mapa
 void posicaoRobo() {
   for (int i = 0; i < linhas; i++) {
     for (int j = 0; j < colunas; j++) {
@@ -84,10 +78,7 @@ void posicaoRobo() {
   }
 }
 
-//===========================================================================
-//Mover o robo pra frente
-//===========================================================================
-
+//Faz com que o robo avance uma casa na martiz
 void moverParaFrente() {
   if (flag) {
     controle('w');
@@ -95,24 +86,24 @@ void moverParaFrente() {
     flag = false;
   }
   Serial.print("In: moverParaFrente. \t");
-  if (encoderEsquerda - distancia >= comprimentoQuadrado){
+  if (encoderEsquerda - distancia >= comprimentoQuadrado) {
     controle('s');
     numeroDaRota--;
     flag = true;
     Serial.print("In: Condição de pausa moverParaFrente  \t");
     switch (orientacao) {
       case 'NORTE':
-      roboI = roboI - 1;
-      break;
+        roboI = roboI - 1;
+        break;
       case 'SUL':
-      roboI = roboI + 1;
-      break;
+        roboI = roboI + 1;
+        break;
       case 'LESTE':
-      roboJ = roboJ + 1;
-      break;
+        roboJ = roboJ + 1;
+        break;
       case 'OESTE':
-      roboJ = roboJ - 1;
-      break;
+        roboJ = roboJ - 1;
+        break;
     }
   }
 }
@@ -121,21 +112,35 @@ void moverParaFrente() {
 //Girar o robo
 //===========================================================================
 
-void girar(char direcao) {
+void girar(char direcao, char rumo) {
   switch (direcao) {
     case 'DIREITA':
-      controle('d');
-      Serial.print("In: girar D. \t");
-    break;
+      do {
+        controle('d');
+        leituraOrientacao();
+        rosaDosVentos();
+        Serial.println(orientacao);
+      } while (orientacao != rumo);
+      break;
+
     case 'ESQUERDA':
-      controle('a');
-      Serial.print("In: girar E. \t");
-    break;
+      do {
+        controle('a');
+        leituraOrientacao();
+        rosaDosVentos();        
+         Serial.println(orientacao);
+      } while (orientacao != rumo);
+      break;
+
     case 'MEIAVOLTA':
-      controle('d');
-      Serial.print("In: girar T. \t");
-    break;
-    default: controle('s');
+      do {
+        controle('d');
+        leituraOrientacao();
+        rosaDosVentos();
+         Serial.println(orientacao);
+      } while (orientacao != rumo);
+      break;
+
   }
 }
 
@@ -144,20 +149,45 @@ void girar(char direcao) {
 //===========================================================================
 
 void rodarWavefront() {
-  if (numeroDaRota < 1){ 
+  // Checa se o robo chegou ao destino e ordena parada
+  if (numeroDaRota < 1) {
     controle('s');
     Serial.print("Cheguei ao destino.");
-    while(1);
+    while (1);
   }
-  else if (ultrassomEsquerda > distanciaMinima &&  ultrassomEsquerda < distanciaMaxima  || ultrassomDireita > distanciaMinima && ultrassomDireita < distanciaMaxima || ultrassomCentro > distanciaMinima && ultrassomCentro < distanciaMaxima) {
-    controle('s');
-    delay(tempoDeEspera);
-    if(flag) {
-      if(ultrassomDireita <= ultrassomEsquerda) gira('DIREITA');
-      else gira('ESQUERDA');
+  // Checa se existe um obstáculo detectado pelos ultrassons.
+  else if (ultrassomEsquerda > distanciaMinimaUltrassom &&  ultrassomEsquerda < distanciaMaximaUltrassom  || ultrassomDireita > distanciaMinimaUltrassom && ultrassomDireita < distanciaMaximaUltrassom || ultrassomCentro > distanciaMinimaUltrassom && ultrassomCentro < distanciaMaximaUltrassom) {
+    
+    if (flagObstaculo){
+      if(millis() - esperaTimer > tempoDeEspera){
+        switch (orientacao) {
+          case 'NORTE':
+            mapa[roboI-1][roboJ] = 0;
+            flagObstaculo = false;
+            break;
+          case 'SUL':
+            mapa[roboI+1][roboJ] = 0;
+            flagObstaculo = false;
+            break;
+          case 'LESTE':
+            mapa[roboI][roboJ+1] = 0;
+            flagObstaculo = false;
+            break;
+          case 'OESTE':
+            mapa[roboI][roboJ-1] = 0;
+            flagObstaculo = false;
+            break;
+        }
+      }
+    }
+    else{ 
+      controle('s');
+      flagObstaculo = true;
+      esperaTimer = millis(); 
     }
   }
-  else {
+  // Caso não exista obstáculo e o destino não tenha sido alcançado, realiza os movimentos
+  if (!flagObstaculo){
     rosaDosVentos();
     switch (orientacao) {
       case 'NORTE':
@@ -167,13 +197,13 @@ void rodarWavefront() {
         }
         else if (mapa[roboI][roboJ + 1] == numeroDaRota) {
           Serial.print("In: wavefront N girar D  \t");
-          girar('DIREITA');
+          girar('DIREITA','LESTE');
         }
         else if (mapa[roboI][roboJ - 1] == numeroDaRota) {
-          girar('ESQUERDA');
+          girar('ESQUERDA','OESTE');
         }
         else if (mapa[roboI + 1][roboJ] == numeroDaRota) {
-          girar('MEIAVOLTA');
+          girar('MEIAVOLTA','SUL');
         }
         break;
       case 'SUL':
@@ -181,13 +211,13 @@ void rodarWavefront() {
           moverParaFrente();
         }
         else if (mapa[roboI][roboJ - 1] == numeroDaRota) {
-          girar('DIREITA');
+          girar('DIREITA','OESTE');
         }
         else if (mapa[roboI][roboJ + 1] == numeroDaRota) {
-          girar('ESQUERDA');
+          girar('ESQUERDA','LESTE');
         }
         else if (mapa[roboI + 1][roboJ] == numeroDaRota) {
-          girar('MEIAVOLTA');
+          girar('MEIAVOLTA','NORTE');
         }
         break;
 
@@ -197,13 +227,13 @@ void rodarWavefront() {
           moverParaFrente();
         }
         else if (mapa[roboI + 1][roboJ] == numeroDaRota) {
-          girar('DIREITA');
+          girar('DIREITA','SUL');
         }
         else if (mapa[roboI - 1][roboJ] == numeroDaRota) {
-          girar('ESQUERDA');
+          girar('ESQUERDA','NORTE');
         }
         else if (mapa[roboI][roboJ - 1] == numeroDaRota) {
-          girar('MEIAVOLTA');
+          girar('MEIAVOLTA','OESTE');
         }
         break;
 
@@ -212,13 +242,13 @@ void rodarWavefront() {
           moverParaFrente();
         }
         else if (mapa[roboI - 1][roboJ] == numeroDaRota) {
-          girar('DIREITA');
+          girar('DIREITA','NORTE');
         }
         else if (mapa[roboI + 1][roboJ] == numeroDaRota) {
-          girar('ESQUERDA');
+          girar('ESQUERDA','SUL');
         }
         else if (mapa[roboI][roboJ + 1] == numeroDaRota) {
-          girar('MEIAVOLTA');
+          girar('MEIAVOLTA','LESTE');
         }
         break;
 
