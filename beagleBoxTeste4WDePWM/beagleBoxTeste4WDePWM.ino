@@ -6,7 +6,7 @@ int dirB = 10;
 int vel = 0; // Velocidade dos motores, Range:(0-255)
 int estado = 'i'; // inicia sem atuação nos motores
 int ultimoEstado;
-boolean flagSerial = false;
+bool flagSerial = false;
 
 void setup() { 
   Serial.begin(38400); // Comunicação com a Rasp
