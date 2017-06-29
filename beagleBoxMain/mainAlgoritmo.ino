@@ -15,11 +15,15 @@
 //===========================================================================
 int numeroDaRota;
 float distancia = 0;
-bool flag = true;
+bool flagMoverParaFrente = true;
 bool flagObstaculo = false;
 unsigned long esperaTimer = 0;
-// int posi = 6;
-// int posj = 1;
+int aPercorrer = 0;
+
+int quantoRodeiN = 0;
+int quantoRodeiS = 0;
+int quantoRodeiL = 0;
+int quantoRodeiO = 0;
 
 int mapa[linhas][colunas] = {
   {0, 0, 0, 0, 0, 0, 0},
@@ -36,7 +40,10 @@ int mapa[linhas][colunas] = {
 //Funções
 //===========================================================================
 
-//Converte os valores da bussola para direções conhecidas
+//===========================================================================
+//Direcoes NORTE SUL LESTE E OESTE
+//===========================================================================
+
 void rosaDosVentos() {
   if (bussola > -1 && bussola < 1) {
     orientacao = 'N';
@@ -58,7 +65,10 @@ void rosaDosVentos() {
     }*/
 }
 
-//Calcula o menor numero da redondeza do robo para que ele siga o caminho
+//===========================================================================
+//Menor Vizinho
+//===========================================================================
+
 void calculoNumeroDaRota () {
   
   numeroDaRota = 30000;
@@ -67,45 +77,46 @@ void calculoNumeroDaRota () {
   if(mapa[roboI-1][roboJ] < numeroDaRota && mapa[roboI-1][roboJ] != 0){numeroDaRota = mapa[roboI-1][roboJ];}
   if(mapa[roboI][roboJ+1] < numeroDaRota && mapa[roboI][roboJ+1] != 0){numeroDaRota = mapa[roboI][roboJ+1];}
   if(mapa[roboI][roboJ-1] < numeroDaRota && mapa[roboI][roboJ-1] != 0){numeroDaRota = mapa[roboI][roboJ-1];}
-      
-  
 }
 
-//Encontra a posição do Robo no mapa
-// void posicaoRobo( posi, posj) {
+//===========================================================================
+//Avança uma casa
+//===========================================================================
 
-//         roboI = posi;
-//         roboJ = posj;
-//   // for (int i = 0; i < linhas; i++) {
-//   //   for (int j = 0; j < colunas; j++) {
-//   //     if (mapa[i][j] == 255) {
-//   //       roboI = posi;
-//   //       roboJ = posj;
-//   //       break;
-//   //     }
-//   //     if (posi == i && posj == j) {
-//   //       mapa[posi][posj] == 255
-//   //       mapa[roboI][roboJ]
-//   //     }
-
-//   //   }
-//   // }
-// }
-
-
-
-//Faz com que o robo avance uma casa na martiz
-void moverParaFrente() {
-  if (flag) {
+int moverParaFrente() {
+  if (flagMoverParaFrente) {
     controle('w');
     distancia = encoder;
-    flag = false;
+    flagMoverParaFrente = false;
+
+    switch (orientacao) {
+      case 'N':
+        aPercorrer = comprimentoQuadrado - quantoRodeiN;
+        quantoRodeiN = 0;
+        break;
+      case 'S':
+        aPercorrer = comprimentoQuadrado - quantoRodeiS;
+        quantoRodeiS = 0;
+        break;
+      case 'L':
+        aPercorrer = comprimentoQuadrado - quantoRodeiL;
+        quantoRodeiL = 0;
+        break;
+      case 'O':
+        aPercorrer = comprimentoQuadrado - quantoRodeiO;
+        quantoRodeiO = 0;
+        break;
+    }
+
   }
+
   Serial.print("In: moverParaFrente. \t");
-  if (encoder - distancia >= comprimentoQuadrado) {
-    controle('s');
-    flag = true;
+  if (encoder - distancia >= aPercorrer) {
     Serial.print("In: Condição de pausa moverParaFrente  \t");
+    
+    controle('s');
+    flagMoverParaFrente = true;
+
     switch (orientacao) {
       case 'N':
         roboI = roboI - 1;
@@ -119,9 +130,9 @@ void moverParaFrente() {
       case 'O':
         roboJ = roboJ - 1;
         break;
-    calculoNumeroDaRota();
     }
   }
+  return encoder - distancia;
 }
 
 //===========================================================================
@@ -162,41 +173,47 @@ void girar(char direcao, char rumo) {
 }
 
 //===========================================================================
-//Algoritmo
+//Encontrou o destino
 //===========================================================================
 
-void rodarWavefront() {
-  Serial.print("In: rodarWavefront \t");
+void fim(){
+  controle('s');
+  Serial.print("Cheguei ao destino.");
+  while (1);
+}
 
-  // Checa se o robo chegou ao destino e ordena parada
-  if (numeroDaRota < 1) {
-    controle('s');
-    Serial.print("Cheguei ao destino.");
-    while (1);
-  }
-  // Checa se existe um obstáculo detectado pelos ultrassons.
-  else if (ultrassomEsquerda > distanciaMinimaUltrassom &&  ultrassomEsquerda < distanciaMaximaUltrassom  || ultrassomDireita > distanciaMinimaUltrassom && ultrassomDireita < distanciaMaximaUltrassom || ultrassomCentro > distanciaMinimaUltrassom && ultrassomCentro < distanciaMaximaUltrassom) {
-    
-      Serial.print("In: ultrassom check \t");
+//===========================================================================
+//Checa os obstaculos
+//===========================================================================
 
-    if (flagObstaculo){
+void obstaculo() {
+
+  if (flagObstaculo){
       if(millis() - esperaTimer > tempoDeEspera){
           Serial.print("In: esperei 3s \t");
 
         switch (orientacao) {
+          
           case 'N':
+            quantoRodeiN = encoder - distancia;
             mapa[roboI-1][roboJ] = 0;
             flagObstaculo = false;
             break;
+          
           case 'S':
+            quantoRodeiS = encoder - distancia;
             mapa[roboI+1][roboJ] = 0;
             flagObstaculo = false;
             break;
+          
           case 'L':
+            quantoRodeiL = encoder - distancia;
             mapa[roboI][roboJ+1] = 0;
             flagObstaculo = false;
             break;
+          
           case 'O':
+            quantoRodeiO = encoder - distancia;
             mapa[roboI][roboJ-1] = 0;
             flagObstaculo = false;
             break;
@@ -205,18 +222,24 @@ void rodarWavefront() {
       }
     }
     else{ 
+      Serial.print("In: ultrassomCheck primeira passagem\t");
       controle('s');
-      flagObstaculo = true;
       esperaTimer = millis(); 
-        Serial.print("In: ultrassomCheck primeira passagem\t");
+      
 
+
+      flagObstaculo = true;
     }
-  }
-  // Caso não exista obstáculo e o destino não tenha sido alcançado, realiza os movimentos
-  if (!flagObstaculo){
-      Serial.print("In: wavefront sem obstaculo \t");
-    flagObstaculo = false;
-    switch (orientacao) {
+}
+
+//===========================================================================
+//Controle dos movimentos
+//===========================================================================
+
+void movimento(){
+  
+  switch (orientacao) {
+      
       case 'N':
         if (mapa[roboI - 1][roboJ] == numeroDaRota ) {
           Serial.print("In: wavefront N frente  \t");
@@ -233,6 +256,7 @@ void rodarWavefront() {
           girar('MEIAVOLTA','S');
         }
         break;
+
       case 'S':
         if (mapa[roboI + 1][roboJ] == numeroDaRota ) {
           moverParaFrente();
@@ -283,7 +307,6 @@ void rodarWavefront() {
 
       default: rosaDosVentos();
     }
-  }
 }
 
 //===========================================================================
@@ -295,4 +318,30 @@ void setupAlgoritmo() {
   calculoNumeroDaRota(); 
   Serial.println(numeroDaRota); 
 }
+
+//===========================================================================
+//Algoritmo
+//===========================================================================
+
+void rodarWavefront() {
+  Serial.print("In: rodarWavefront \t");
+
+  calculoNumeroDaRota();
+
+  // Checa se o robo chegou ao destino e ordena parada
+  if (numeroDaRota < 1) {
+    fim();
+  }
+  // Checa se existe um obstáculo detectado pelos ultrassons.
+  else if (ultrassomEsquerda > distanciaMinimaUltrassom &&  ultrassomEsquerda < distanciaMaximaUltrassom  || ultrassomDireita > distanciaMinimaUltrassom && ultrassomDireita < distanciaMaximaUltrassom || ultrassomCentro > distanciaMinimaUltrassom && ultrassomCentro < distanciaMaximaUltrassom) {
+    Serial.print("In: ultrassom check \t");
+    obstaculo();  
+  }
+  // Caso não exista obstáculo e o destino não tenha sido alcançado, realiza os movimentos
+  if (!flagObstaculo){
+    Serial.print("In: wavefront sem obstaculo \t");
+    movimento();
+  }
+}
+
 

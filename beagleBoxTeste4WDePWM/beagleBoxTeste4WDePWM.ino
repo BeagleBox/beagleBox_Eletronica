@@ -29,7 +29,7 @@ void loop() {
     //Serial.println ("Direita");
   }
   if(estado=='a'){ // Esquerda
-    movimento(0,vel,0,vel);
+    movimento(0,vel,vel,0);
   } 
   if(estado=='x'){ // Ré
     movimento(0,0,vel,vel);

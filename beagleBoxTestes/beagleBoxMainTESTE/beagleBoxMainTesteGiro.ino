@@ -1,26 +1,23 @@
 /*
   Controle BeagleBox
-
   Funcionalidades:
   #Ultrassom
   #Encoder
   #PWM
   #Acelerometro/Giroscopio (Bussola)
-
   Pinagem Arduino:
-  A0 ----> 
-  A1 ----> 
+  A0 ----> Analogico Encoder Esquerda
+  A1 ----> Analogico Encoder Direita
   A2 ---->
   A3 ---->
   A4 ----> SCA MPU6050
   A5 ----> SCL MPU6050
   A6 ---->
   A7 ---->
-
   D00 ---> TX
   D01 ---> RX
   D02 ---> Interrupção do MPU6050
-  D03 ---> Interrupção do Encoder
+  D03 ---> Interrupção do EncoderEsquerda
   D04 ---> Ultrassom Esquerda
   D05 ---> Motor Dianteiro Esquerda
   D06 ---> Motor Traseiro Esquerda
@@ -28,10 +25,9 @@
   D08 --->
   D09 ---> Motor Dianteiro Direita
   D10 ---> Motor Traseiro Direita
-  D11 ---> 
+  D11 ---> Encoder Direita
   D12 ---> Ultrassom Centro
   D13 --->
-
 */
 //===========================================================================
 //Bibliotecas
@@ -60,8 +56,8 @@
 //===========================================================================
 
 //Posicionamento do robo na matriz
-int roboI = 6;
-int roboJ = 1;
+int roboI;
+int roboJ;
 
 //inidicação de atividade
 bool blinkState = false;
@@ -70,17 +66,20 @@ float bussola = 0;
 float ultrassomDireita = 0;
 float ultrassomCentro = 0;
 float ultrassomEsquerda = 0;
-unsigned int encoder = 0;
+float encoderEsquerda = 0;
+float encoderDireita = 0;
 float teste = 0;
 char orientacao = 'I';
 
 //INTERVALOS DE LEITURA DOS SINAIS
 const unsigned long orientacaoIntervalo = 10;
 const unsigned long ultrassomIntervalo = 150;
+const unsigned long encoderIntervalo = 1;
 
 //TIMERS PARA REPETIR A LEITURA DO SINAL
 unsigned long orientacaoTimer;
 unsigned long ultrassomTimer;
+unsigned long encoderTimer;
 
 //===========================================================================
 //Funções
@@ -88,9 +87,6 @@ unsigned long ultrassomTimer;
 
 /*Algoritmo
   wavefront                 ALGORITMO DE RESOLUÇÃO DO MAPA
-  rosaDosVentos             TRASFORMA O DADO DA BUSSOLA PARA DIRECOES N,S,L,O
-  calculoNumeroDaRota       CALCULA O
-  posicaoRobo
 */
 /*Bussola
   orientacao                LOOP DA BUSSOLA QUE INFORMA A ORIENTACAO DO ROBO
@@ -108,56 +104,24 @@ unsigned long ultrassomTimer;
 */
 
 //===========================================================================
-//LED mosta que o loop está acontecendo
-//===========================================================================
-
-void atividade() {
-  blinkState = !blinkState;
-  digitalWrite(LED_PIN, blinkState);
-}
-
-//===========================================================================
 //Rotina de Leitura dos Sensores
 //===========================================================================
 
-void lerSensores() {
+void leituraSensores(){  
   if ((millis() - orientacaoTimer) >= orientacaoIntervalo) {
     leituraOrientacao();
-    rosaDosVentos();
   }//fim da leitura
-  if ((millis() - ultrassomTimer) >= ultrassomIntervalo) {
-    leituraUltrassomDireita();
-  }//fim da leitura
-  if ((millis() - (ultrassomTimer + intervaloEntreUltrassons)) >= ultrassomIntervalo) {
-    leituraUltrassomCentro();
-  }//fim da leitura
-  if ((millis() - (ultrassomTimer + 2 * intervaloEntreUltrassons)) >= ultrassomIntervalo) {
-    leituraUltrassomEsquerda();
-  }//fim da leitura
+
 }
 
 //===========================================================================
 //Serial Debug
 //===========================================================================
 
-void serialDebug() {
+void serialDebug() {  
   Serial.print(bussola);
   Serial.print("\t");
-  Serial.print(ultrassomDireita);
-  Serial.print("\t");
-  Serial.print(ultrassomCentro);
-  Serial.print("\t");
-  Serial.print(ultrassomEsquerda);
-  Serial.print("\t");
-  Serial.print(encoder);
-  Serial.print("\t");
   Serial.println(orientacao);
-  Serial.println("\t");
-  Serial.println(roboI);
-  Serial.println("\t");
-  Serial.println(roboJ);
-
-
 }
 
 //===========================================================================
@@ -187,15 +151,16 @@ void setup() {
 
   //intervalo de calibração dos sensores
   Serial.println("Calibrando Sensores...");
-  while (millis() < intervaloCalibracao) {
-
-  };
+  while (millis() < intervaloCalibracao) {};
   Serial.println("\tPRONTO!");
+  leituraOrientacao();
   delay(500);
+  leituraOrientacao();
 
   //tempo que foi chamado
   orientacaoTimer = millis();
   ultrassomTimer = millis();
+  encoderTimer = millis();
 
 }
 
@@ -205,16 +170,32 @@ void setup() {
 
 void loop() {
 
-  //atualiza o valor dos sensores.
-  Serial.println("In: lerSensores");
-  lerSensores();
+  leituraSensores();
 
-  //Algoritmo que realiza os movimentos do robo
-  rodarWavefront();
+ 
+  if(estado == 'w'){girar('ESQUERDA','L')}
+  if(estado == 'a'){girar('ESQUERDA','S')}
+  if(estado == 'x'){girar('ESQUERDA','O')}
+  if(estado == 'd'){girar('ESQUERDA','N')}
+  if(estado == 't'){girar('DIREITA','L')}
+  if(estado == 'f'){girar('DIREITA','S')}
+  if(estado == 'b'){girar('DIREITA','O')}
+  if(estado == 'h'){girar('DIREITA','N')}
+  if(estado == 'o'){girar('MEIAVOLTA','O')}
+  if(estado == 'p'){girar('MEIAVOLTA','L')}  
 
-  //Rotina para acompanhar os valores dos sensores e posição da execução
+
+
   serialDebug();
 
   //LED para indicar atividade
-  atividade();
+  blinkState = !blinkState;
+  digitalWrite(LED_PIN, blinkState);
+}
+
+
+void serialEvent() {
+  while (Serial.available()) {
+    estado = Serial.read();
+  }
 }

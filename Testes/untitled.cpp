@@ -18,8 +18,7 @@ float distancia = 0;
 bool flagMoverParaFrente = true;
 bool flagObstaculo = false;
 unsigned long esperaTimer = 0;
-// int posi = 6;
-// int posj = 1;
+int aPercorrer = 0;
 
 int mapa[linhas][colunas] = {
   {0, 0, 0, 0, 0, 0, 0},
@@ -87,19 +86,19 @@ int moverParaFrente() {
 
     switch (orientacao) {
       case 'N':
-        comprimentoQuadrado = comprimentoQuadrado - quantoRodeiN;
+        aPercorrer = comprimentoQuadrado - quantoRodeiN;
         quantoRodeiN = 0;
         break;
       case 'S':
-        comprimentoQuadrado = comprimentoQuadrado - quantoRodeiS;
+        aPercorrer = comprimentoQuadrado - quantoRodeiS;
         quantoRodeiS = 0;
         break;
       case 'L':
-        comprimentoQuadrado = comprimentoQuadrado - quantoRodeiL;
+        aPercorrer = comprimentoQuadrado - quantoRodeiL;
         quantoRodeiL = 0;
         break;
       case 'O':
-        comprimentoQuadrado = comprimentoQuadrado - quantoRodeiO;
+        aPercorrer = comprimentoQuadrado - quantoRodeiO;
         quantoRodeiO = 0;
         break;
     }
@@ -107,14 +106,11 @@ int moverParaFrente() {
   }
 
   Serial.print("In: moverParaFrente. \t");
-  if (encoder - distancia >= comprimentoQuadrado) {
+  if (encoder - distancia >= aPercorrer) {
     Serial.print("In: Condição de pausa moverParaFrente  \t");
     
     controle('s');
-    
     flagMoverParaFrente = true;
-    
-
 
     switch (orientacao) {
       case 'N':
@@ -232,7 +228,9 @@ void obstaculo() {
 //===========================================================================
 
 void movimento(){
+  
   switch (orientacao) {
+      
       case 'N':
         if (mapa[roboI - 1][roboJ] == numeroDaRota ) {
           Serial.print("In: wavefront N frente  \t");
@@ -249,6 +247,7 @@ void movimento(){
           girar('MEIAVOLTA','S');
         }
         break;
+
       case 'S':
         if (mapa[roboI + 1][roboJ] == numeroDaRota ) {
           moverParaFrente();
@@ -302,6 +301,16 @@ void movimento(){
 }
 
 //===========================================================================
+//Setup
+//===========================================================================
+
+void setupAlgoritmo() {
+  rosaDosVentos();
+  calculoNumeroDaRota(); 
+  Serial.println(numeroDaRota); 
+}
+
+//===========================================================================
 //Algoritmo
 //===========================================================================
 
@@ -326,53 +335,4 @@ void rodarWavefront() {
   }
 }
 
-//===========================================================================
-//Setup
-//===========================================================================
 
-void setupAlgoritmo() {
-  rosaDosVentos();
-  calculoNumeroDaRota(); 
-  Serial.println(numeroDaRota); 
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//Encontra a posição do Robo no mapa
-// void posicaoRobo( posi, posj) {
-
-//         roboI = posi;
-//         roboJ = posj;
-//   // for (int i = 0; i < linhas; i++) {
-//   //   for (int j = 0; j < colunas; j++) {
-//   //     if (mapa[i][j] == 255) {
-//   //       roboI = posi;
-//   //       roboJ = posj;
-//   //       break;
-//   //     }
-//   //     if (posi == i && posj == j) {
-//   //       mapa[posi][posj] == 255
-//   //       mapa[roboI][roboJ]
-//   //     }
-
-//   //   }
-//   // }
-// }

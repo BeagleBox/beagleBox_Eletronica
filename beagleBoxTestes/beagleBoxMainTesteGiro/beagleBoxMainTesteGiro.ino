@@ -59,6 +59,7 @@
 int roboI;
 int roboJ;
 
+int estado = 'i';
 //inidicação de atividade
 bool blinkState = false;
 
@@ -110,20 +111,8 @@ unsigned long encoderTimer;
 void leituraSensores(){  
   if ((millis() - orientacaoTimer) >= orientacaoIntervalo) {
     leituraOrientacao();
-    rosaDosVentos();
   }//fim da leitura
-  if ((millis() - ultrassomTimer) >= ultrassomIntervalo) {
-    leituraUltrassomDireita();
-  }//fim da leitura
-  if ((millis() - (ultrassomTimer + intervaloEntreUltrassons)) >= ultrassomIntervalo) {
-    leituraUltrassomCentro();
-  }//fim da leitura
-  if ((millis() - (ultrassomTimer + 2*intervaloEntreUltrassons)) >= ultrassomIntervalo) {
-    leituraUltrassomEsquerda();
-  }//fim da leitura
-  if ((millis() - encoderTimer) >= encoderIntervalo) {
-    leituraEncoder();
-  }//fim da leitura
+
 }
 
 //===========================================================================
@@ -132,14 +121,6 @@ void leituraSensores(){
 
 void serialDebug() {  
   Serial.print(bussola);
-  Serial.print("\t");
-  Serial.print(ultrassomDireita);
-  Serial.print("\t");
-  Serial.print(ultrassomCentro);
-  Serial.print("\t");
-  Serial.print(ultrassomEsquerda);
-  Serial.print("\t");
-  Serial.print(encoderEsquerda);
   Serial.print("\t");
   Serial.println(orientacao);
 }
@@ -155,7 +136,7 @@ void setup() {
   //INICIALIZAÇÃO DOS SENSORES
   Serial.println("  ");
   Serial.println("Inicializando Sensores...");
-  setupAlgoritmo();
+  // setupAlgoritmo();
   Serial.println("\tAlgoritmo Inicializado.");
   setupBussola();
   Serial.println("\tBussola Inicializado.");
@@ -192,11 +173,30 @@ void loop() {
 
   leituraSensores();
 
-  wavefront();
+ 
+  if(estado == 'w'){girar('ESQUERDA','L');}
+  if(estado == 'a'){girar('ESQUERDA','S');}
+  if(estado == 'x'){girar('ESQUERDA','O');}
+  if(estado == 'd'){girar('ESQUERDA','N');}
+  if(estado == 't'){girar('DIREITA','L');}
+  if(estado == 'f'){girar('DIREITA','S');}
+  if(estado == 'b'){girar('DIREITA','O');}
+  if(estado == 'h'){girar('DIREITA','N');}
+  if(estado == 'o'){girar('MEIAVOLTA','O');}
+  if(estado == 'p'){girar('MEIAVOLTA','L');}  
 
-  //serialDebug();
+
+
+  serialDebug();
 
   //LED para indicar atividade
   blinkState = !blinkState;
   digitalWrite(LED_PIN, blinkState);
+}
+
+
+void serialEvent() {
+  while (Serial.available()) {
+    estado = Serial.read();
+  }
 }

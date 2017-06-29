@@ -4,7 +4,7 @@
 //===========================================================================
 
 #define passoDeVelocidade 10
-#define comprimentoQuadrado 20
+#define comprimentoQuadrado 50
 
 //===========================================================================
 //Variaveis
@@ -15,7 +15,7 @@ int motorTraseiroEsquerda = 6;
 int motorDianteiroDireita = 9;
 int motorTraseiroDireita = 10;
 // Velocidade dos motores, pusol PWM: (0-255)
-int velocidadeMotor = 200;
+int velocidadeMotor = 120;
 float distancia = 0;
 bool flag = true;
 
@@ -45,7 +45,7 @@ void controle(char estado) {
     //Serial.println ("Direita");
   }
   if (estado == 'a') { // Esquerda
-    movimento(0, velocidadeMotor, 0, velocidadeMotor);
+    movimento(0, velocidadeMotor, velocidadeMotor, 0 );
   }
   if (estado == 'x') { // Ré
     movimento(0, 0, velocidadeMotor, velocidadeMotor);
@@ -62,50 +62,68 @@ void controle(char estado) {
   }
 }
 
-void moverParaFrente() {
-  if (flag) {
-    controle('w');
-    distancia = encoderEsquerda;
-    flag = false;
-  }
-  //Serial.print("In: moverParaFrente. \t");
-  if (encoderEsquerda - distancia >= comprimentoQuadrado){
-    controle('s');
-    numeroDaRota--;
-    flag = true;
-    //Serial.print("In: Condição de pausa moverParaFrente  \t");
-    switch (orientacao) {
-      case 'N':
-      roboI = roboI - 1;
-      break;
-      case 'S':
-      roboI = roboI + 1;
-      break;
-      case 'L':
-      roboJ = roboJ + 1;
-      break;
-      case 'O':
-      roboJ = roboJ - 1;
-      break;
-    }
-  }
-}
+// void moverParaFrente() {
+//   if (flag) {
+//     controle('w');
+//     distancia = encoderEsquerda;
+//     flag = false;
+//   }
+//   // Serial.print("In: moverParaFrente. \t");
+  
+//   if (encoderEsquerda - distancia >= comprimentoQuadrado){
+//     controle('s');
+//     numeroDaRota--;
+//     flag = true;
+//     rosaDosVentos();
+//     // Serial.print("In: Condição de pausa moverParaFrente  \t");
+//     switch (orientacao) {
+//       case 'N':
+//       roboI = roboI - 1;
+//       break;
+//       case 'S':
+//       roboI = roboI + 1;
+//       break;
+//       case 'L':
+//       roboJ = roboJ + 1;
+//       break;
+//       case 'O':
+//       roboJ = roboJ - 1;
+//       break;
+//     }
+//   }
+// }
 
-void girar(char direcao) {
+void girar(char direcao, char rumo) {
+  Serial.print("In: girar \t");
   switch (direcao) {
-    case 'D':
-      controle('d');
-      //Serial.print("In: girar D. \t");
-    break;
-    case 'E':
-      controle('a');
-      //Serial.print("In: girar E. \t");
-    break;
-    case 'T':
-      controle('d');
-      //Serial.print("In: girar T. \t");
-    break;
-    default: controle('s');
+    case 'DIREITA':
+      do {
+        controle('d');
+        leituraOrientacao();
+        rosaDosVentos();
+        Serial.println(orientacao);
+      } while (orientacao != rumo);
+      
+      break;
+
+    case 'ESQUERDA':
+      do {
+        controle('a');
+        leituraOrientacao();
+        rosaDosVentos();        
+         Serial.println(orientacao);
+      } while (orientacao != rumo);
+      break;
+
+    case 'MEIAVOLTA':
+      do {
+        controle('d');
+        leituraOrientacao();
+        rosaDosVentos();
+         Serial.println(orientacao);
+      } while (orientacao != rumo);
+      break;
+
   }
 }
 
