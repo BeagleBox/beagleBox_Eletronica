@@ -20,7 +20,7 @@ int velocidadeMotor = 100;
 //Funções
 //===========================================================================
 
-void movimento(int a, int b, int c, int d) {
+void comando(int a, int b, int c, int d) {
   analogWrite(motorDianteiroDireita, a);
   analogWrite(motorDianteiroEsquerda, b);
   analogWrite(motorTraseiroDireita, c);
@@ -34,21 +34,21 @@ void velocidade(signed int a) {
 void controle(char estado) {
   if (estado == 'i') {} // OFF
   if (estado == 'w') { // Frente
-    movimento(velocidadeMotor, velocidadeMotor, 0, 0);
+    comando(velocidadeMotor, velocidadeMotor, 0, 0);
     //Serial.println ("FRENTE");
   }
   if (estado == 'd') { // Direita
-    movimento(velocidadeMotor, 0, 0, velocidadeMotor);
+    comando(velocidadeMotor, 0, 0, velocidadeMotor);
     //Serial.println ("Direita");
   }
   if (estado == 'a') { // Esquerda
-    movimento(0, velocidadeMotor, 0, velocidadeMotor);
+    comando(0, velocidadeMotor, 0, velocidadeMotor);
   }
   if (estado == 'x') { // Ré
-    movimento(0, 0, velocidadeMotor, velocidadeMotor);
+    comando(0, 0, velocidadeMotor, velocidadeMotor);
   }
   if (estado == 's') { // Parado
-    movimento(0, 0, 0, 0);
+    comando(0, 0, 0, 0);
   }
   //Velocidade
   if (estado == 'q') { // Aumenta a velocidade dos motores

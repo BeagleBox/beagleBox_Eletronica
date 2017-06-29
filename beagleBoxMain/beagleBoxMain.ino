@@ -193,7 +193,9 @@ void setup() {
 
   //intervalo de calibração dos sensores
   Serial.println("Calibrando Sensores...");
-  while (millis() < intervaloCalibracao) {};
+  while (millis() < intervaloCalibracao) {
+
+  };
   Serial.println("\tPRONTO!");
   delay(500);
 
