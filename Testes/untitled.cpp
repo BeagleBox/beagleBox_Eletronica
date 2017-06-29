@@ -15,7 +15,7 @@
 //===========================================================================
 int numeroDaRota;
 float distancia = 0;
-bool flag = true;
+bool flagMoverParaFrente = true;
 bool flagObstaculo = false;
 unsigned long esperaTimer = 0;
 // int posi = 6;
@@ -80,16 +80,42 @@ void calculoNumeroDaRota () {
 //===========================================================================
 
 int moverParaFrente() {
-  if (flag) {
+  if (flagMoverParaFrente) {
     controle('w');
-    distancia = encoderEsquerda;
-    flag = false;
+    distancia = encoder;
+    flagMoverParaFrente = false;
+
+    switch (orientacao) {
+      case 'N':
+        comprimentoQuadrado = comprimentoQuadrado - quantoRodeiN;
+        quantoRodeiN = 0;
+        break;
+      case 'S':
+        comprimentoQuadrado = comprimentoQuadrado - quantoRodeiS;
+        quantoRodeiS = 0;
+        break;
+      case 'L':
+        comprimentoQuadrado = comprimentoQuadrado - quantoRodeiL;
+        quantoRodeiL = 0;
+        break;
+      case 'O':
+        comprimentoQuadrado = comprimentoQuadrado - quantoRodeiO;
+        quantoRodeiO = 0;
+        break;
+    }
+
   }
+
   Serial.print("In: moverParaFrente. \t");
-  if (encoderEsquerda - distancia >= comprimentoQuadrado) {
-    controle('s');
-    flag = true;
+  if (encoder - distancia >= comprimentoQuadrado) {
     Serial.print("In: Condição de pausa moverParaFrente  \t");
+    
+    controle('s');
+    
+    flagMoverParaFrente = true;
+    
+
+
     switch (orientacao) {
       case 'N':
         roboI = roboI - 1;
@@ -105,7 +131,7 @@ int moverParaFrente() {
         break;
     }
   }
-  return encoderEsquerda - distancia;
+  return encoder - distancia;
 }
 
 //===========================================================================
@@ -167,18 +193,22 @@ void obstaculo() {
 
         switch (orientacao) {
           case 'N':
+            quantoRodeiN = encoder - distancia;
             mapa[roboI-1][roboJ] = 0;
             flagObstaculo = false;
             break;
           case 'S':
+            quantoRodeiS = encoder - distancia;
             mapa[roboI+1][roboJ] = 0;
             flagObstaculo = false;
             break;
           case 'L':
+            quantoRodeiL = encoder - distancia;
             mapa[roboI][roboJ+1] = 0;
             flagObstaculo = false;
             break;
-          case 'O':
+          case 'O':x
+            quantoRodeiO = encoder - distancia;
             mapa[roboI][roboJ-1] = 0;
             flagObstaculo = false;
             break;
@@ -187,10 +217,13 @@ void obstaculo() {
       }
     }
     else{ 
+      Serial.print("In: ultrassomCheck primeira passagem\t");
       controle('s');
-      flagObstaculo = true;
       esperaTimer = millis(); 
-        Serial.print("In: ultrassomCheck primeira passagem\t");
+      
+
+
+      flagObstaculo = true;
     }
 }
 

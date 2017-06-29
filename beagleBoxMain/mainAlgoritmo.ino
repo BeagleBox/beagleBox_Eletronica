@@ -98,11 +98,11 @@ void calculoNumeroDaRota () {
 void moverParaFrente() {
   if (flag) {
     controle('w');
-    distancia = encoderEsquerda;
+    distancia = encoder;
     flag = false;
   }
   Serial.print("In: moverParaFrente. \t");
-  if (encoderEsquerda - distancia >= comprimentoQuadrado) {
+  if (encoder - distancia >= comprimentoQuadrado) {
     controle('s');
     flag = true;
     Serial.print("In: Condição de pausa moverParaFrente  \t");

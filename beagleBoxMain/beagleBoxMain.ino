@@ -20,7 +20,7 @@
   D00 ---> TX
   D01 ---> RX
   D02 ---> Interrupção do MPU6050
-  D03 ---> Interrupção do EncoderEsquerda
+  D03 ---> Interrupção do Encoder
   D04 ---> Ultrassom Esquerda
   D05 ---> Motor Dianteiro Esquerda
   D06 ---> Motor Traseiro Esquerda
@@ -70,7 +70,7 @@ float bussola = 0;
 float ultrassomDireita = 0;
 float ultrassomCentro = 0;
 float ultrassomEsquerda = 0;
-float encoderEsquerda = 0;
+float encoder = 0;
 float encoderDireita = 0;
 float teste = 0;
 char orientacao = 'I';
@@ -155,7 +155,7 @@ void serialDebug() {
   Serial.print("\t");
   Serial.print(ultrassomEsquerda);
   Serial.print("\t");
-  Serial.print(encoderEsquerda);
+  Serial.print(encoder);
   Serial.print("\t");
   Serial.println(orientacao);
   Serial.println("\t");
