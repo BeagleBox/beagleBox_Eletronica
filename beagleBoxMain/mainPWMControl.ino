@@ -14,7 +14,6 @@ int motorTraseiroEsquerda = 6;
 int motorDianteiroDireita = 9;
 int motorTraseiroDireita = 10;
 // Velocidade dos motores, pusol PWM: (0-255)
-int velocidadeMotor = 100;
 
 //===========================================================================
 //Funções

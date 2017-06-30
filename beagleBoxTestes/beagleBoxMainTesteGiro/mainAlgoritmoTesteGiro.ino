@@ -36,6 +36,9 @@ void rosaDosVentos() {
   else if (bussola < -89 && bussola > -91) {
     orientacao = 'O';
   }
+  else {
+    orientacao = 'Z';
+  }
 }
 
 // void calculoNumeroDaRota () {

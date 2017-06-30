@@ -62,6 +62,7 @@
 //Posicionamento do robo na matriz
 int roboI = 6;
 int roboJ = 1;
+int velocidadeMotor = 100;
 
 //inidicação de atividade
 bool blinkState = false;

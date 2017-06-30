@@ -135,42 +135,66 @@ int moverParaFrente() {
   return encoder - distancia;
 }
 
+
+
 //===========================================================================
 //Girar o robo
 //===========================================================================
 
 void girar(char direcao, char rumo) {
   Serial.print("In: girar \t");
-  switch (direcao) {
-    case 'DIREITA':
-      do {
-        controle('d');
-        leituraOrientacao();
-        rosaDosVentos();
-        Serial.println(orientacao);
-      } while (orientacao != rumo);
-      break;
+  switch(rumo){
 
-    case 'ESQUERDA':
-      do {
-        controle('a');
-        leituraOrientacao();
-        rosaDosVentos();        
-         Serial.println(orientacao);
-      } while (orientacao != rumo);
-      break;
-
-    case 'MEIAVOLTA':
-      do {
-        controle('d');
-        leituraOrientacao();
-        rosaDosVentos();
-         Serial.println(orientacao);
-      } while (orientacao != rumo);
-      break;
-
+    case 'N':
+    controlePID(180);
+    break;
+    case 'S':
+    controlePID(360);
+    break;
+    case 'L':
+    controlePID(90);
+    break;
+    case 'O':
+    controlePID(270);
+    break;
+  
   }
-}
+
+//   switch (direcao) {
+//     case 'DIREITA':
+//       do {
+//         controle('d');
+//         leituraOrientacao();
+//         rosaDosVentos();
+//         Serial.println(orientacao);
+//       } while (orientacao != rumo);
+//       break;
+
+//     case 'ESQUERDA':
+//       do {
+//         controle('a');
+//         leituraOrientacao();
+//         rosaDosVentos();        
+//          Serial.println(orientacao);
+//       } while (orientacao != rumo);
+
+//       delay(100);
+
+
+
+//       break;
+
+//     case 'MEIAVOLTA':
+//       do {
+//         controle('d');
+//         leituraOrientacao();
+//         rosaDosVentos();
+//          Serial.println(orientacao);
+//       } while (orientacao != rumo);
+//       break;
+
+//   }
+// }
 
 //===========================================================================
 //Encontrou o destino
