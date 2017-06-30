@@ -40,47 +40,33 @@
 #include "Wire.h"
 #endif
 
-//ULTRASSOM
-#include <NewPing.h>
-
 //===========================================================================
 //Constantes
 //===========================================================================
 
 #define LED_PIN 13
 #define intervaloCalibracao 16000
-#define intervaloEntreUltrassons 50
 
 //===========================================================================
 //Variaveis
 //===========================================================================
 
-//Posicionamento do robo na matriz
-int roboI;
-int roboJ;
-
-int estado = 'i';
+int dadoSerial = 'i';
 //inidicação de atividade
 bool blinkState = false;
 
 float bussola = 0;
-float ultrassomDireita = 0;
-float ultrassomCentro = 0;
-float ultrassomEsquerda = 0;
-float encoderEsquerda = 0;
-float encoderDireita = 0;
-float teste = 0;
+
 char orientacao = 'I';
 
 //INTERVALOS DE LEITURA DOS SINAIS
 const unsigned long orientacaoIntervalo = 10;
-const unsigned long ultrassomIntervalo = 150;
-const unsigned long encoderIntervalo = 1;
+const unsigned long serialIntervalo = 200;
 
 //TIMERS PARA REPETIR A LEITURA DO SINAL
 unsigned long orientacaoTimer;
-unsigned long ultrassomTimer;
-unsigned long encoderTimer;
+unsigned long serialTimer;
+
 
 //===========================================================================
 //Funções
@@ -111,6 +97,7 @@ unsigned long encoderTimer;
 void leituraSensores(){  
   if ((millis() - orientacaoTimer) >= orientacaoIntervalo) {
     leituraOrientacao();
+    rosaDosVentos();
   }//fim da leitura
 
 }
@@ -123,6 +110,8 @@ void serialDebug() {
   Serial.print(bussola);
   Serial.print("\t");
   Serial.println(orientacao);
+
+  serialTimer = millis();
 }
 
 //===========================================================================
@@ -136,16 +125,11 @@ void setup() {
   //INICIALIZAÇÃO DOS SENSORES
   Serial.println("  ");
   Serial.println("Inicializando Sensores...");
-  // setupAlgoritmo();
-  Serial.println("\tAlgoritmo Inicializado.");
   setupBussola();
   Serial.println("\tBussola Inicializado.");
-  setupEncoder();
-  Serial.println("\tEncoder Inicializado.");
   setupPWMControl();
   Serial.println("\tPWMControl Inicializado.");
-  setupUltrassom();
-  Serial.println("\tUltrassom Inicializado.");
+
 
   //LED de indicação de atividade
   pinMode(LED_PIN, OUTPUT);
@@ -160,8 +144,7 @@ void setup() {
 
   //tempo que foi chamado
   orientacaoTimer = millis();
-  ultrassomTimer = millis();
-  encoderTimer = millis();
+  serialTimer = millis();
 
 }
 
@@ -172,31 +155,52 @@ void setup() {
 void loop() {
 
   leituraSensores();
-
  
-  if(estado == 'w'){girar('ESQUERDA','L');}
-  if(estado == 'a'){girar('ESQUERDA','S');}
-  if(estado == 'x'){girar('ESQUERDA','O');}
-  if(estado == 'd'){girar('ESQUERDA','N');}
-  if(estado == 't'){girar('DIREITA','L');}
-  if(estado == 'f'){girar('DIREITA','S');}
-  if(estado == 'b'){girar('DIREITA','O');}
-  if(estado == 'h'){girar('DIREITA','N');}
-  if(estado == 'o'){girar('MEIAVOLTA','O');}
-  if(estado == 'p'){girar('MEIAVOLTA','L');}  
+  if(dadoSerial == 'w'){
+    Serial.print("w ");
+    girar('ESQUERDA','L');}
+  else if(dadoSerial == 'a'){
+    Serial.print("a ");
+    girar('ESQUERDA','S');}
+  else if(dadoSerial == 'x'){
+    Serial.print("x ");
+    girar('ESQUERDA','O');}
+  else if(dadoSerial == 'd'){
+    Serial.print("d ");
+    girar('ESQUERDA','N');}
+  else if(dadoSerial == 't'){
+    Serial.print("t ");
+    girar('DIREITA','O');}
+  else if(dadoSerial == 'f'){
+    Serial.print("f ");
+    girar('DIREITA','S');}
+  else if(dadoSerial == 'b'){
+    Serial.print("b ");
+    girar('DIREITA','L');}
+  else if(dadoSerial == 'h'){
+    Serial.print("h ");
+    girar('DIREITA','N');}
+  else if(dadoSerial == 'o'){
+    Serial.print("o ");
+    girar('MEIAVOLTA','O');}
+  else if(dadoSerial == 'p'){
+    Serial.print("p ");
+    girar('MEIAVOLTA','L');}  
 
+  controle('s');
 
+  // if ((millis() - serialTimer) >= serialIntervalo) {
+   serialDebug();
+  // }//fim da leitura
 
-  serialDebug();
 
   //LED para indicar atividade
   blinkState = !blinkState;
   digitalWrite(LED_PIN, blinkState);
 }
 
-
 void serialEvent() {
   while (Serial.available()) {
-    estado = Serial.read();
+    dadoSerial = Serial.read();
   }
 }

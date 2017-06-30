@@ -51,8 +51,8 @@ void setupBussola() {
     // supply your own gyro offsets here, scaled for min sensitivity
     mpu.setXGyroOffset(220);
     mpu.setYGyroOffset(76);
-    mpu.setZGyroOffset(18);
-    mpu.setZAccelOffset(1788); // 1688 factory default for my test chip
+    mpu.setZGyroOffset(13);
+    mpu.setZAccelOffset(1688); // 1688 factory default for my test chip
 
     // make sure it worked (returns 0 if so)
     if (devStatus == 0) {

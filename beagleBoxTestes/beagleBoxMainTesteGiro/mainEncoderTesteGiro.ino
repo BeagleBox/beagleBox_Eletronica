@@ -1,46 +1,46 @@
 
-//===========================================================================
-//Constantes
-//===========================================================================
+// //===========================================================================
+// //Constantes
+// //===========================================================================
 
-# define pinoEncoderEsquerda 3
-# define pinoEncoderDireita 11
+// # define pinoEncoderEsquerda 3
+// # define pinoEncoderDireita 11
 
-//===========================================================================
-//Variaveis 
-//===========================================================================
+// //===========================================================================
+// //Variaveis 
+// //===========================================================================
 
-//Contador do numero de voltas que o encoder realizou
-unsigned int encoderCounter=0;
-//Variaveis para contagem de giros do encoder
-boolean encoderOldValue = true;
-boolean encoderNewValue = true;
+// //Contador do numero de voltas que o encoder realizou
+// unsigned int encoderCounter=0;
+// //Variaveis para contagem de giros do encoder
+// boolean encoderOldValue = true;
+// boolean encoderNewValue = true;
 
-//===========================================================================
-//Funções
-//===========================================================================
+// //===========================================================================
+// //Funções
+// //===========================================================================
 
-void incrementoEncoder(){
-  encoderCounter++;
-}
+// void incrementoEncoder(){
+//   encoderCounter++;
+// }
 
-void setupEncoder(){
-  //pinMode(pinoEncoderEsquerda,INPUT);  
-  pinMode(pinoEncoderDireita,INPUT);
-  attachInterrupt(1, incrementoEncoder, RISING); 
-  //if (digitalRead(pinoEncoderEsquerda) == LOW){encoderOldValue = false;} 
-}
+// void setupEncoder(){
+//   //pinMode(pinoEncoderEsquerda,INPUT);  
+//   pinMode(pinoEncoderDireita,INPUT);
+//   attachInterrupt(1, incrementoEncoder, RISING); 
+//   //if (digitalRead(pinoEncoderEsquerda) == LOW){encoderOldValue = false;} 
+// }
 
-void leituraEncoder(){
+// void leituraEncoder(){
   
-  /*encoderNewValue = digitalRead(pinoEncoderEsquerda);
+//   /*encoderNewValue = digitalRead(pinoEncoderEsquerda);
 
-  if(digitalRead(pinoEncoderEsquerda) != encoderOldValue ){
-  encoderCounter++;
-  encoderOldValue = encoderNewValue;
-  }*/
+//   if(digitalRead(pinoEncoderEsquerda) != encoderOldValue ){
+//   encoderCounter++;
+//   encoderOldValue = encoderNewValue;
+//   }*/
 
-  encoderEsquerda = encoderCounter ; // * 0.508938 para cm
-  //Adicionando por causa do Timer
-  encoderTimer = millis();
-}
+//   encoderEsquerda = encoderCounter ; // * 0.508938 para cm
+//   //Adicionando por causa do Timer
+//   encoderTimer = millis();
+// }

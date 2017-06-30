@@ -15,7 +15,7 @@ int motorTraseiroEsquerda = 6;
 int motorDianteiroDireita = 9;
 int motorTraseiroDireita = 10;
 // Velocidade dos motores, pusol PWM: (0-255)
-int velocidadeMotor = 120;
+int velocidadeMotor = 200;
 float distancia = 0;
 bool flag = true;
 
@@ -95,6 +95,7 @@ void controle(char estado) {
 
 void girar(char direcao, char rumo) {
   Serial.print("In: girar \t");
+  
   switch (direcao) {
     case 'DIREITA':
       do {
@@ -103,7 +104,7 @@ void girar(char direcao, char rumo) {
         rosaDosVentos();
         Serial.println(orientacao);
       } while (orientacao != rumo);
-      
+      controle('s');
       break;
 
     case 'ESQUERDA':
@@ -113,6 +114,7 @@ void girar(char direcao, char rumo) {
         rosaDosVentos();        
          Serial.println(orientacao);
       } while (orientacao != rumo);
+      controle('s');
       break;
 
     case 'MEIAVOLTA':
@@ -122,6 +124,7 @@ void girar(char direcao, char rumo) {
         rosaDosVentos();
          Serial.println(orientacao);
       } while (orientacao != rumo);
+      controle('s');
       break;
 
   }
