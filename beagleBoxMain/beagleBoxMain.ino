@@ -62,7 +62,7 @@
 //Posicionamento do robo na matriz
 int roboI = 6;
 int roboJ = 1;
-int velocidadeMotor = 100;
+int velocidadeMotor = 150;
 
 //inidicação de atividade
 bool blinkState = false;
@@ -122,6 +122,8 @@ void atividade() {
 //===========================================================================
 
 void lerSensores() {
+  Serial.println("In: lerSensores");
+
   if ((millis() - orientacaoTimer) >= orientacaoIntervalo) {
     leituraOrientacao();
     rosaDosVentos();
@@ -142,21 +144,25 @@ void lerSensores() {
 //===========================================================================
 
 void serialDebug() {
+  
+  Serial.print("In: serialDebug");
+  
   Serial.print(bussola);
-  Serial.print("\t");
+  Serial.print("<-bussola\t");
   Serial.print(ultrassomDireita);
-  Serial.print("\t");
+  Serial.print("<-ud\t");
   Serial.print(ultrassomCentro);
-  Serial.print("\t");
+  Serial.print("<-uc\t");
   Serial.print(ultrassomEsquerda);
-  Serial.print("\t");
+  Serial.print("<-ue\t");
   Serial.print(encoder);
-  Serial.print("\t");
-  Serial.println(orientacao);
-  Serial.println("\t");
-  Serial.println(roboI);
-  Serial.println("\t");
-  Serial.println(roboJ);
+  Serial.print("<-encoder\t");
+  Serial.print(orientacao);
+  Serial.print("<-orientacao\t");
+  Serial.print(roboI);
+  Serial.print("<-roboI\t");
+  Serial.print(roboJ);
+  Serial.println("<-roboJ");
 
 
 }
@@ -188,9 +194,8 @@ void setup() {
 
   //intervalo de calibração dos sensores
   Serial.println("Calibrando Sensores...");
-  while (millis() < intervaloCalibracao) {
+  while (millis() < intervaloCalibracao) {};
 
-  };
   Serial.println("\tPRONTO!");
   delay(500);
 
@@ -207,7 +212,6 @@ void setup() {
 void loop() {
 
   //atualiza o valor dos sensores.
-  Serial.println("In: lerSensores");
   lerSensores();
 
   //Algoritmo que realiza os movimentos do robo

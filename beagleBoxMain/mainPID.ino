@@ -53,6 +53,9 @@ bool anguloIncorreto = true;
 // }
 
 void controlePID(int valorDesejado) {
+	
+	Serial.print("In: controlePID\t");
+
 	// Lê temperatura
 	anguloIncorreto = true;
 
@@ -67,7 +70,7 @@ void controlePID(int valorDesejado) {
 
 		sentido = meuPid.process();
 
-		velocidadeMotor = map(sentido + valorDesejado, -90, 90, 0 ,255);
+		//velocidadeMotor = map(sentido + valorDesejado, -90, 90, 0 ,255);
 		// Saída do controle
 		if (sentido < -0.5){
 			controle('a');
