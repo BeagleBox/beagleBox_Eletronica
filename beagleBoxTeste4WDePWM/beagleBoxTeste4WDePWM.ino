@@ -1,3 +1,18 @@
+/* LIVIA E GABI, 
+
+1- Coloquem o sinal de controle da ponte H nos pinos D5 e D6 do arduino,
+2- Façam o upload do programa pra placa.
+3- Abram o Serial Monitor 
+4- Mandem os sinais
+    W - Pra frente.
+    X - Pra tras.
+    A - Pra Esquerda 
+    D - Pra Diretia 
+    S - Parada 
+    Q - aumenta a velocidade 
+    E - diminui a velocidade
+ */
+
 
 int esqA = 5; 
 int esqB = 6; 
